@@ -62,6 +62,7 @@ class ParticleForceGenerator(object):
         
 
 if __name__ == "__main__":
+    # print(np.show_config())
     p = Particle()
     p.setMass(1.0)
     p.setDamping(0.99)
