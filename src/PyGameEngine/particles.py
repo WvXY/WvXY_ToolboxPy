@@ -80,10 +80,12 @@ if __name__ == "__main__":
 
 
     t = time_ms()
+
     trajectory = []
-    for i in range(1000):
+    for _ in range(1000):
         p.integrate(0.01)
         trajectory.append([p.position[0], p.position[1]])
+
     print("time: ", time_ms() - t, "ms")
     
     plt.plot(*zip(*trajectory))
