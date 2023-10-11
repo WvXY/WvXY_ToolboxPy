@@ -38,9 +38,9 @@ class Particle(object):
         assert duration > 0.
 
         self.position += self.velocity * duration   # update position
-        resultingAcc = self.acceleration            # update acceleration
-        resultingAcc += self.forceAccum * self.__inverseMass
-        self.velocity += resultingAcc * duration    # update velocity
+        self.resultingAcc = self.acceleration            # update acceleration
+        self.resultingAcc += self.forceAccum * self.__inverseMass
+        self.velocity += self.resultingAcc * duration    # update velocity
         self.velocity *= pow(self.damping, duration)
         
         self.clearAccumulator()
@@ -56,7 +56,9 @@ class Particle(object):
         
 class ParticleForceGenerator(object):
     def updateForce(self, particle, duration):
-        raise NotImplementedError()
+        pass
+
+
         
 
 if __name__ == "__main__":
@@ -70,11 +72,13 @@ if __name__ == "__main__":
     p.forceAccum += GRAVITY * p.mass
     
     from time import time
-    import matplotlib.pyplot as plt 
+    import matplotlib.pyplot as plt
+
 
     def time_ms():
         return int(round(time() * 1000))
-    
+
+
     t = time_ms()
     trajectory = []
     for i in range(1000):
