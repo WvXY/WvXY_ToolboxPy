@@ -18,15 +18,16 @@ class FireworkRule:
         self.payload = Payload()
 
     def create(self):
-        result = Shot(self.type)
-        result.particle.setMass(1.0)
-        result.particle.setDamping(self.damping)
-        result.particle.setPosition((0., 0., 0.))
-        result.particle.setVelocity((0., self.minVelocity + (self.maxVelocity - self.minVelocity) * random.random(), 0.))
-        result.particle.setAcceleration((0., 0.5, 0.))
-        result.particle.clearAccumulator()
-        result.particle.setMass(1.0)
-        return result
+        # result = Shot(self.type)
+        # result.particle.setMass(1.0)
+        # result.particle.setDamping(self.damping)
+        # result.particle.setPosition((0., 0., 0.))
+        # result.particle.setVelocity((0., self.minVelocity + (self.maxVelocity - self.minVelocity) * random.random(), 0.))
+        # result.particle.setAcceleration((0., 0.5, 0.))
+        # result.particle.clearAccumulator()
+        # result.particle.setMass(1.0)
+        # return result
+        pass
 
 
 
