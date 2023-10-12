@@ -9,21 +9,21 @@ class Shot(pge.Particle):
         self.setCurrentType()
 
 
-    def setPistol(self):
+    def __setPistol(self):
         self.setMass(0.01)
         self.setDamping(0.99)
         self.setPosition((0., 1., 0.))
         self.setVelocity((200., 200., 0.))
         self.setAcceleration((0., -1., 0.))
 
-    def setArtillery(self):
+    def __setArtillery(self):
         self.setMass(200.0)
         self.setDamping(0.99)
         self.setPosition((0., 1., 0.))
         self.setVelocity((50., 50., 0.))
         self.setAcceleration((0., -20., 0.))
 
-    def setFireball(self):
+    def __setFireball(self):
         self.setMass(1.0)
         self.setDamping(0.99)
         self.setPosition((0., 1., 0.))
@@ -33,19 +33,24 @@ class Shot(pge.Particle):
 
     def setCurrentType(self):
         if self.type == "pistol":
-            self.setPistol()
+            self.__setPistol()
         elif self.type == "artillery":
-            self.setArtillery()
+            self.__setArtillery()
         elif self.type == "fireball":
-            self.setFireball()
+            self.__setFireball()
         else:
             raise ValueError("Invalid type of shot: {}".format(self.type))
         return Shot
 
 if __name__ == "__main__":
     type = "Pistol"
+    trajectory = []
     shot = Shot(type)
     for _ in range(1000):
         shot.integrate(0.01)
-        print(shot.position)
+        trajectory.append(shot.position)
+
+    import matplotlib.pyplot as plt
+    plt.plot(*zip(*trajectory))
+    plt.show()
     # print(shot.mass)

@@ -1,8 +1,8 @@
 import unittest
-import src.PyGameEngine as pge
+from src import PyGameEngine as pge
 
 class MyTestCase(unittest.TestCase):
-    def gen_particle(self):
+    def test_gen_particle(self):
         p = pge.Particle()
         p.setMass(1.0)
         p.setDamping(0.99)
@@ -11,10 +11,10 @@ class MyTestCase(unittest.TestCase):
         p.setAcceleration((0., 0., 0.))
 
         self.p = p
-        self.assertEqual(True, True)
+        self.assertEqual(self.p.mass, 1.0)
 
-    def test2(self):
-        p = pge.Particle()
+    def test_integrate(self):
+        self.p.integrate(0.01)
 
 
 if __name__ == '__main__':
