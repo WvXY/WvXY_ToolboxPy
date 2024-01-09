@@ -1,8 +1,8 @@
 from copy import deepcopy, copy
 import torch
 import torch.nn as nn
-from .operations import *
-from .dynamics import Movement
+
+from ..Utils import operations
 from .grid import Grid
 
 torch.set_default_dtype(torch.float64)
