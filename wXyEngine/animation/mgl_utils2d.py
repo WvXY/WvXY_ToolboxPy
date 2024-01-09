@@ -23,7 +23,7 @@ class MglUtil2d:
         return (grid / n).astype(np.float32)
 
     def draw_grid(self, color=None, n=10, scale=1.0):
-        if self.grid is None:
+        if self.grid is None:   # TODO: fix this 
             self.grid = self.make_grid(n) * scale
         if color is None:
             color = np.tile(np.array([0.5, 0.5, 0.5]),
