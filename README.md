@@ -1,4 +1,7 @@
-# Nos5-PY-Engine
+# wXyEngine
 
-This is a temporary name
+### Description
+A simple 2D game engine written in Python using Moderngl
 
+It comes from my master thesis project.
+It is currently in development and not ready for use.
