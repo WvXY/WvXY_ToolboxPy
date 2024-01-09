@@ -1,7 +1,10 @@
 from . import (
-    primitive,
-    grid,
-    distance_functions,
+    SdPrimitives,
 )
 
-__all__ = ['primitive']
+# Current no other files here, so just import all
+from .SdPrimitives import *
+
+__all__ = ['SdPrimitives']
+
+

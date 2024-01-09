@@ -1,26 +1,12 @@
 from time import time
-
 import moderngl
-import moderngl_window as mglw
 import numpy as np
 from pyrr import Matrix44
 
-
-class Window(mglw.WindowConfig):
-    gl_version = (3, 3)
-    title = "Research 3D Visualization"
-    window_size = (1280, 720)
-    aspect_ratio = 16 / 9
-    resizable = True
-    samples = 4  # anti-aliasing
-    cursor = True
-    point_size = 100
-    vsync = False
+from .MdglWindow import Window
 
 
-# ======================================================
-# -----------------visualization------------------------
-class MGL3(Window):
+class Mdgl3d(Window):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -28,8 +14,6 @@ class MGL3(Window):
             vertex_shader="""
                 #version 330
                 
-                // uniform float scale_global;
-                // uniform vec2 scale_window;
                 uniform mat4 Mvp;
                 
                 in vec3 vert;
@@ -172,24 +156,6 @@ class MGL3(Window):
         self.mvp.write((proj * lookat).astype("f4").tobytes())
         self.light.value = camera_pos
 
-    # texture
-    # def draw_picture(self):
-    #     width, height = self.window_size
-    #
-    #     # pixels = os.urandom(width * height * 4)
-    #     # pixels = np.random.rand(width * height * 4).tobytes()
-    #     pixels = np.random.random(width * height * 4).astype('f4').tobytes()
-    #     # pixels = np.random.random(width * height * 4).tobytes()
-    #     texture = ctypes.c_uint32()
-    #     GL.glGenTextures(1, ctypes.byref(texture))
-    #     GL.glActiveTexture(GL.GL_TEXTURE0)
-    #     GL.glBindTexture(GL.GL_TEXTURE_2D, texture)
-    #     GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA8, width, height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixels)
-    #     GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST)
-    #     GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST)
-    #     self.texture = self.ctx.external_texture(texture.value, (width, height), 4, 0, 'f1')
-
-    # ---------------------------------------------
     # ---------------render loop-------------------
     def render(self, time, frame_time):
         # clear screen
@@ -208,3 +174,7 @@ class MGL3(Window):
         self.draw_rectangles(np.array([[0, 0]]), np.array([[1, 1]]))
 
         # vao.render()
+
+
+if __name__ == "__main__":
+    Mdgl3d.run()

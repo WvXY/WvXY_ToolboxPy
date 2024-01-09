@@ -2,7 +2,7 @@ from copy import deepcopy, copy
 import torch
 import torch.nn as nn
 
-from ..Utils import operations
+from ..Utils import GeoOps
 from .grid import Grid
 
 torch.set_default_dtype(torch.float64)

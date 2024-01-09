@@ -6,11 +6,11 @@ import moderngl
 import numpy as np
 from moderngl_window.integrations.imgui import ModernglWindowRenderer
 
-from .mgl_window import Window
-from .mgl_utils2d import MglUtil2d
+from .MdglWindow import Window
+from .MdglUtils2d import MdglUtil2d
 
 
-class Mgl2d(Window, MglUtil2d):
+class Mdgl2d(Window, MdglUtil2d):
     gl_version = (4, 5)
     title = "ModernGL Draw in 2D"
     resource_dir = Path(__file__).parent.resolve()
@@ -34,7 +34,7 @@ class Mgl2d(Window, MglUtil2d):
         self.draw_points(p)
 
 
-class MglGUIEvent(Mgl2d):
+class MglGUIEvent(Mdgl2d):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -94,5 +94,5 @@ class MglGUIEvent(Mgl2d):
 
 
 if __name__ == "__main__":
-    # Mgl2d.run()
+    # Mdgl2d.run()
     MglGUIEvent.run()

@@ -1,13 +1,8 @@
-import moderngl
-import numpy as np
-import moderngl_window as mglw
-from pyrr import Matrix44
-from moderngl_window.integrations.imgui import ModernglWindowRenderer
-import imgui
+import moderngl_window
 
 
 # initialize window
-class Window(mglw.WindowConfig):
+class Window(moderngl_window.WindowConfig):
     gl_version = (4, 5)
     title = "ModernGL Window"
     window_size = (800, 600)

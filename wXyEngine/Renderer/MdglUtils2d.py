@@ -3,7 +3,7 @@ import numpy as np
 
 
 # some drawing functions
-class MglUtil2d:
+class MdglUtil2d:
     def __init__(self):
         self.prog = None
         self.particle_prog = None
