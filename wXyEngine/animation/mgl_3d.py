@@ -208,7 +208,3 @@ class MGL3(Window):
         self.draw_rectangles(np.array([[0, 0]]), np.array([[1, 1]]))
 
         # vao.render()
-
-
-if __name__ == "__main__":
-    MGL3.run()
