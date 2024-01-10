@@ -1,10 +1,10 @@
 from ballistic import Shot
-from src.PyGameEngine import Particle
+from wXyEngine.Geometry import Particle
 import numpy as np
 
-
-GRAVITY = np.array([0.0, -9.8, 0.0], dtype="f4")    # earth gravity
 global GRAVITY
+GRAVITY = np.array([0.0, -9.8, 0.0], dtype="f4")    # earth gravity
+
 
 
 class Payload:

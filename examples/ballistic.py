@@ -1,11 +1,12 @@
-from src import PyGameEngine as pge
+import wXyEngine as xe
+from wXyEngine.Geometry import Particle
 
 
-class Shot(pge.Particle):
+class Shot(xe.Geometry.SdParticle):
     def __init__(self, type):
         # super().__init__()
         self.type = type.lower()
-        self.particle = pge.Particle()
+        self.particle = Particle()
         self.setCurrentType()
 
     def __setPistol(self):

@@ -8,6 +8,13 @@ from .grid import Grid
 torch.set_default_dtype(torch.float64)
 
 
+class Particle:
+    def __init__(self, mass=1.0, damping=1.0):
+        self.inverseMass = 1.0 / mass if mass != 0 else 0.0
+        self.damping = damping
+        self.type = 1
+
+
 # =============================================================================
 # primitive shapes
 class SdOrientedBox(object):
