@@ -2,7 +2,6 @@ from copy import deepcopy, copy
 import torch
 import torch.nn as nn
 
-from ..Utils import GeoOps
 from .grid import Grid
 
 torch.set_default_dtype(torch.float64)
@@ -136,7 +135,7 @@ class SdSquare:
         return point_rotated
 
     def sd(self, point, r=0.0) -> float:
-        point = torch.tensor(point, dtype=torch.float32)
+        point = torch.tensor(point, dtype=torch.float64)
         point_corrected = self.correct_position(point)
         dx = torch.abs(point_corrected[0]) - self.width / 2.0
         dy = torch.abs(point_corrected[1]) - self.height / 2.0
