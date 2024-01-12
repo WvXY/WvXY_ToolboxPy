@@ -13,7 +13,7 @@ class HelloWorld(Renderer.Mdgl2d.Mdgl2d):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.game_objects = Geometry.GameObject()
+        self.game_objects = Geometry._GameObject()
 
     def render(self, time: float, frame_time: float):
         self.ctx.clear(0.2, 0.4, 0.6)
