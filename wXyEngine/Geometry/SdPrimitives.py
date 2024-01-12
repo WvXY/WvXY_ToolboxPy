@@ -1,42 +1,10 @@
-from copy import deepcopy, copy
 import torch
-import torch.nn as nn
-
-from ..Utils import GeoOps
-from .grid import Grid
-
-torch.set_default_dtype(torch.float64)
+from .Primitives import *
 
 
-class Particle:
-    def __init__(self, mass=1.0, damping=1.0):
-        self.inverseMass = 1.0 / mass if mass != 0 else 0.0
-        self.damping = damping
-        self.type = 1
-
-
-# =============================================================================
-# primitive shapes
-class SdOrientedBox(object):
+class SdOrientedBox(OrientedBox):
     def __init__(self, a: torch.Tensor, b: torch.Tensor, th):
-        # super().__init__(a, b, th)
-
-        self.a = nn.Parameter(a)
-        self.b = nn.Parameter(b)
-        self.th = nn.Parameter(torch.tensor(th, dtype=torch.float64))
-
-        self.center = nn.Parameter((self.a + self.b) / 2.0)
-        self.ba = self.b - self.a
-        self.theta = torch.atan2(self.ba[1], self.ba[0])
-        self.dir = self.ba / torch.norm(self.ba)
-        self.len = torch.norm(self.ba)  # + self.th
-        # end will be at a/b if "th" is removed
-        # (other functions need to be changed)
-
-        # set parameters
-        self.len = nn.Parameter(self.len)
-        self.th = nn.Parameter(self.th)
-        self.theta = nn.Parameter(self.theta)
+        super().__init__(a, b, th)
 
     def update_other_parameters(self):
         """update parameters based on center, len, th, theta"""
@@ -92,32 +60,31 @@ class SdOrientedBox(object):
         self.th.grad = None
 
 
-class SdParticle:
+class SdParticle(Particle):
     def __init__(self, center):
+        super().__init__(center)
         self.center = torch.tensor(center)
-        self.r = 0.0
 
     def sd(self, p, r=None) -> float:
         self.r = self.r if r is None else r
         return torch.norm(p - self.center, dim=-1) - self.r
 
 
-class SdCircle(SdParticle):
+class SdCircle(Circle):
     def __init__(self, radius, center):
-        super().__init__(center)
-        self.radius = radius
+        super().__init__(radius, center)
+        self.center = torch.tensor(center)
+        self.r = None
 
     def sd(self, p, r=None) -> float:
         self.r = self.r if r is None else r
         return torch.norm(p - self.center, dim=-1) - self.radius - r
 
 
-class SdSquare:
-    def __init__(self, width, height, center=[0.0, 0.0], theta=0.0):
-        # super().__init__()
-        self.center = torch.tensor(center, dtype=torch.float32)
-        self.width = width
-        self.height = height
+class SdRectangle(Rectangle):
+    def __init__(self, center, width, height, theta=0.0):
+        super().__init__(center, width, height, theta)
+        self.center = torch.tensor(center)
         self.theta = torch.tensor(theta)
 
     def __repr__(self) -> str:
@@ -136,48 +103,38 @@ class SdSquare:
         return point_rotated
 
     def sd(self, point, r=0.0) -> float:
-        point = torch.tensor(point, dtype=torch.float32)
+        point = torch.tensor(point, dtype=torch.float64)
         point_corrected = self.correct_position(point)
         dx = torch.abs(point_corrected[0]) - self.width / 2.0
         dy = torch.abs(point_corrected[1]) - self.height / 2.0
         return (
-            torch.minimum(torch.maximum(dx, dy), torch.tensor(0))
-            + torch.norm(
-                torch.stack(
-                    [torch.fmax(dx, torch.tensor(0)), torch.fmax(dy, torch.tensor(0))]
-                ),
-                dim=0,
-            )
-            - r
+                torch.minimum(torch.maximum(dx, dy), torch.tensor(0))
+                + torch.norm(
+            torch.stack(
+                [torch.fmax(dx, torch.tensor(0)),
+                 torch.fmax(dy, torch.tensor(0))]
+            ),
+            dim=0,
+        )
+                - r
         )  # inside + outside
 
 
-class SdLine(Grid):
+class SdLine(Line):
     def __init__(self, a, b, r=0.0):
-        super().__init__()
-        self.a = torch.tensor(a, dtype=torch.float32)
-        self.b = torch.tensor(b, dtype=torch.float32)
-        self.r = r
-        self.direction = self.a - self.b
-        self.length = torch.norm(self.direction)
+        super().__init__(a, b, r)
 
     def sd(self, p) -> float:
         pa, ba = p - self.a, self.b - self.a
         h = torch.clip((pa @ ba) / (ba @ ba), 0, 1)
         return torch.norm(pa - torch.outer(h, ba), dim=-1) - self.r
 
-    def getSD4Grid(self):
-        return self.calculate_grid_distance(self.sd)
-
 
 # Chebyshev distance
-class SdLineBox:
+class SdLineBox(LineBox):
     def __init__(self, a, b, th):
-        self.a = torch.tensor(a, dtype=torch.float32)
-        self.b = torch.tensor(b, dtype=torch.float32)
-        self.th = th
+        super().__init__(a, b, th)
 
-        self.grid = Grid()
         self.ba, self.len, self.dir, self.center = (None, None, None, None)
         self.updateParams()
 
@@ -189,15 +146,14 @@ class SdLineBox:
 
     def sd(self, p):
         if p.shape == (1, 2):
-            p = p.reshape(
-                2,
-            )
+            p = p.reshape(2, )
 
         self.updateParams()
         pa = p - self.a
 
         if 0 <= self.ba.dot(pa) / self.len <= 1:  # (a,b)
-            return torch.norm(torch.cross(self.ba, pa)) / self.len - self.th / 2.0
+            return torch.norm(
+                torch.cross(self.ba, pa)) / self.len - self.th / 2.0
         else:
             ac = torch.abs(pa.dot(self.ba)) / self.len
             v = torch.tensor([self.ba[1], -self.ba[0]])
@@ -218,25 +174,26 @@ class SdLineBox:
         h = torch.clip(torch.dot(pa, self.dir), 0, self.len)
 
         # Distance calculation
-        dist = torch.norm(pa - self.dir * h[:, torch.newaxis], dim=1) - self.th / 2.0
+        dist = torch.norm(pa - self.dir * h[:, torch.newaxis],
+                          dim=1) - self.th / 2.0
         return dist
 
-    def grad(self, p):
-        if p.shape == (1, 2):
-            p = p.reshape(
-                2,
-            )
-        self.ba = self.b - self.a
-        self.len = torch.norm(self.ba)
-        pa = p - self.a
-
-        if 0 <= self.ba.dot(pa) / self.len <= 1:  # debug
-            return torch.cross(self.ba, pa) / self.len
-        else:
-            ac = torch.abs(pa.dot(self.ba)) / self.len
-            v = torch.tensor([self.ba[1], -self.ba[0]])
-            pc = torch.abs(pa.dot(v)) / self.len
-            return torch.tensor([ac, pc])
+    # def grad(self, p):
+    #     if p.shape == (1, 2):
+    #         p = p.reshape(
+    #             2,
+    #         )
+    #     self.ba = self.b - self.a
+    #     self.len = torch.norm(self.ba)
+    #     pa = p - self.a
+    #
+    #     if 0 <= self.ba.dot(pa) / self.len <= 1:  # debug
+    #         return torch.cross(self.ba, pa) / self.len
+    #     else:
+    #         ac = torch.abs(pa.dot(self.ba)) / self.len
+    #         v = torch.tensor([self.ba[1], -self.ba[0]])
+    #         pc = torch.abs(pa.dot(v)) / self.len
+    #         return torch.tensor([ac, pc])
 
     def getArea(self):
         return (self.len + self.th) * self.th
@@ -270,6 +227,3 @@ class SdLineBox:
         self.a += d
         self.b += d
         self.center += self.d
-
-    def getSD4Grid(self):
-        return self.grid.calculate_grid_distance(self.sds)

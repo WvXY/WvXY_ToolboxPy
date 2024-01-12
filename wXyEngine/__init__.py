@@ -21,6 +21,7 @@ __all__ = list(
     set(Utils.__all__)
 )
 
+print("wXyEnginePy imported")
 
 def __getattr__(name):
     if name in __submodules__:
