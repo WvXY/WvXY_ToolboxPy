@@ -1,10 +1,11 @@
 from . import (
-    SdPrimitives,
+    SdPrimitives
 )
 
 # Current no other files here, so just import all
 from .SdPrimitives import *
 
-__all__ = ['SdPrimitives']
+__all__ = ['SdPrimitives',
+           'SdParticle', 'SdCircle', 'SdSquare', 'SdLine', "SdOrientedBox"]
 
 
