@@ -9,5 +9,5 @@ from .Primitives import *
 
 
 __all__ = ['SdPrimitives', 'Primitives',
-           'SdParticle', 'SdCircle', 'SdSquare', 'SdLine', "SdOrientedBox",
-           'Particle', 'Circle', 'Square', 'Line', 'OrientedBox']
+           'SdParticle', 'SdCircle', 'SdRectangle', 'SdLine', "SdOrientedBox",
+           'Particle', 'Circle', 'Rectangle', 'Line', 'OrientedBox']
