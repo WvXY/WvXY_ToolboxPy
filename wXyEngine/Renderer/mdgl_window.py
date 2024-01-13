@@ -3,10 +3,10 @@ import moderngl_window
 
 # initialize window
 class Window(moderngl_window.WindowConfig):
-    gl_version = (4, 5)
+    gl_version = (4, 6)
     title = "ModernGL Window"
-    window_size = (800, 600)
-    aspect_ratio = 4 / 3
+    window_size = (1280, 720)
+    aspect_ratio = 1280 / 720
     resizable = True
     samples = 4  # anti-aliasing
     cursor = True
@@ -14,3 +14,4 @@ class Window(moderngl_window.WindowConfig):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+

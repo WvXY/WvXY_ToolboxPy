@@ -1,19 +1,42 @@
+from pathlib import Path
+
 import moderngl
 import numpy as np
 
+from .mdgl_window import Window
+
 
 # some drawing functions
-class MdglUtil2d:
-    def __init__(self):
-        self.prog = None
-        self.particle_prog = None
-        self.ctx = None
-        self.vbo = None
-        self.vao = None
+class Renderer2D(Window):
+    """
+    This is a 2D renderer based on ModernGL.
+    Draw functions are implemented here.
+    It's only for my research prototyping currently.
+    """
+    title = "ModernGL 2D Renderer"
+    resource_dir = Path(__file__).parent.resolve()
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        self.prog = self.load_program("shaders/basic_shader.glsl")
+        self.particle_prog = self.load_program("shaders/particle.glsl")
         self.grid = None
 
+    def render(self, time: float, frame_time: float):
+        self.ctx.clear(1.0, 1.0, 1.0)
+        self.ctx.enable(moderngl.BLEND)
+
+    def map_wnd_to_gl(self, x, y):
+        return x / self.wnd.width * 2 - 1, 1 - y / self.wnd.height * 2
+
     @staticmethod
-    def make_grid(n=10):
+    def release_resources(*args):
+        for arg in args:
+            arg.release()
+
+    @staticmethod
+    def make_grid(n=10):  # deprecate this
         grid = np.array([], dtype=np.float32)
         for i in range(n * 2 + 1):
             grid = np.append(grid, [i - n, -n])
@@ -22,8 +45,9 @@ class MdglUtil2d:
             grid = np.append(grid, [n, i - n])
         return (grid / n).astype(np.float32)
 
+    # some drawing functions
     def draw_grid(self, color=None, n=10, scale=1.0):
-        if self.grid is None:   # TODO: fix this 
+        if self.grid is None:  # TODO: fix this
             self.grid = self.make_grid(n) * scale
         if color is None:
             color = np.tile(np.array([0.5, 0.5, 0.5]),
@@ -40,8 +64,8 @@ class MdglUtil2d:
 
     def draw_particles(self, vertices, indices, point_size=40):
         self.particle_prog["point_size"].value = point_size
-        indices_buffer = self.ctx.buffer(np.array(indices, dtype='i4'))
         vertices_buffer = self.ctx.buffer(np.array(vertices, dtype='f4'))
+        indices_buffer = self.ctx.buffer(np.array(indices, dtype='i4'))
 
         vao_content = [
             (vertices_buffer, "2f", 0),
@@ -52,7 +76,7 @@ class MdglUtil2d:
         self.vao.render(moderngl.POINTS)
         self.release_resources(self.vao, indices_buffer, vertices_buffer)
 
-    def draw_rectangles(self, center: np.ndarray, shape: np.ndarray):
+    def draw_rectangles(self, center: np.ndarray, shape: np.ndarray):   # TODO: optimize this
         vert = np.array([], dtype=np.float32)
         n = center.shape[0]
         np.random.seed(1)  # random color
@@ -106,13 +130,6 @@ class MdglUtil2d:
                                          "vert_color")
         self.vao.render(moderngl.TRIANGLE_FAN)
 
-    def draw_points(self, p: np.ndarray, size=0.1,
-                    color=np.array([0.0, 0.0, 0.0])):
-        p = p.reshape(-1, 2)
-        # color = np.random.random(3) / 8  # random dark color
-        for i in range(p.shape[0]):
-            self.draw_circle(p[i], radius=size, color=color, n_div=8)
-
     def draw_connections(self, p: np.ndarray, adj: np.ndarray):
         if adj.shape[0] != p.shape[0]:
             raise ValueError("adj.shape[0] != center.shape[0]")
@@ -134,7 +151,7 @@ class MdglUtil2d:
                                          "vert_color")
         self.vao.render(moderngl.LINES)
 
-    def draw_graph(self, nodes, edges):
+    def draw_graph(self, nodes, edges):     # TODO: optimize this
         # self.draw_connections(nodes, adj)
         vert = np.array([], dtype=np.float32)
         for edge in edges:
@@ -150,37 +167,3 @@ class MdglUtil2d:
 
         self.draw_particles(
             nodes, np.ones(nodes.shape[0]), point_size=8)
-
-    @staticmethod
-    def release_resources(*args):
-        for arg in args:
-            arg.release()
-
-
-class Transform2d:
-    def __init__(self, scale=[1.0, 1.0], offset=[0., 0.], rotation=0.):
-        self.transform = np.eye(3, dtype=np.float32)
-        self.scale(*scale)
-        self.rotate(rotation)
-        self.offset(*offset)
-
-    def set_transform(self, transform):
-        self.transform = transform
-
-    @property
-    def mat3(self):
-        return self.transform.flatten().astype("f4")
-
-    def scale(self, x, y):
-        self.transform = np.matmul(self.transform, np.diag([x, y, 1]))
-
-    def rotate(self, theta):
-        self.transform = np.matmul(self.transform, np.array([
-            [np.cos(theta), -np.sin(theta), 0],
-            [np.sin(theta), np.cos(theta), 0],
-            [0, 0, 1]
-        ]))
-
-    def offset(self, x, y):
-        self.transform[2, 0] += x
-        self.transform[2, 1] += y

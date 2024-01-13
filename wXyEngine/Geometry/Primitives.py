@@ -3,19 +3,7 @@ import torch.nn as nn
 
 torch.set_default_dtype(torch.float32)
 
-
-class _GameObject:
-    GUID = -1
-
-    def __init__(self):
-        self.guid = _GameObject.GUID
-        _GameObject.GUID += 1
-
-    def update(self, dt):
-        pass
-
-    def draw(self):
-        pass
+from .GameObject import _GameObject
 
 
 # TODO: optimize this part

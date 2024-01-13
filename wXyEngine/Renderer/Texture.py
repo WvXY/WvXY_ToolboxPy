@@ -2,7 +2,7 @@ import moderngl
 import numpy as np
 from PIL import Image
 
-from .MdglWindow import Window
+from .mdgl_window import Window
 
 # Define the size of the window and the pixel matrix
 window_width = 800

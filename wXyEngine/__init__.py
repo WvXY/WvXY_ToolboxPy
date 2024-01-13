@@ -1,8 +1,15 @@
+import moderngl
+import moderngl_window as mglw
+import numpy as np
+import torch
+from pyrr import Matrix44
+
 from . import main
 from . import Renderer
 from . import Geometry
 from . import Physics
 from . import Utils
+from . import Interface
 
 # https://github.com/numpy/numpy/blob/main/numpy/__init__.py
 
@@ -11,6 +18,7 @@ __submodules__ = {
     "Geometry",
     "Physics",
     "Utils",
+    "Interface"
 }
 
 __all__ = list(
@@ -18,7 +26,8 @@ __all__ = list(
     set(Renderer.__all__) |
     set(Geometry.__all__) |
     set(Physics.__all__) |
-    set(Utils.__all__)
+    set(Utils.__all__) |
+    set(Interface.__all__)
 )
 
 print("\033[96m[wXyEnginePy] Successfully imported\033[0m")

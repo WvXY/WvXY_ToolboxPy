@@ -1,40 +1,70 @@
-from pathlib import Path
-from time import time
+from ..Renderer.renderer_2d import Renderer2D
 
-import imgui
 import moderngl
 import numpy as np
+import imgui
+from moderngl_window.context.base import KeyModifiers
 from moderngl_window.integrations.imgui import ModernglWindowRenderer
 
-from .MdglWindow import Window
-from .MdglUtils2d import MdglUtil2d
 
-
-class Mdgl2d(Window, MdglUtil2d):
-    gl_version = (4, 5)
-    title = "ModernGL Draw in 2D"
-    resource_dir = Path(__file__).parent.resolve()
+class SimpleInterface(Renderer2D):
+    """
+    A simple interface as demo
+    Just showing but not interactive
+    """
+    title = "Simple Interface Template"
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self.prog = self.load_program("shaders/basic_shader.glsl")
-        self.particle_prog = self.load_program("shaders/particle.glsl")
-
-    # ---------------render loop-------------------
-    def render(self, time: float, frame_time: float):
+    def render(self, time, frame_time):
         self.ctx.clear(1.0, 1.0, 1.0)
-        self.ctx.enable(moderngl.BLEND)
-
-        # ==================
-        # add code here
+        self.ctx.enable(moderngl.BLEND | moderngl.PROGRAM_POINT_SIZE)
         self.draw_grid()
-        self.draw_rectangles(np.array([[0, 0]]), np.array([[1, 1]]))
-        p = np.random.randint(-10, 10, (10, 2))
-        self.draw_points(p)
+        p = np.random.rand(10, 2) * 2 - 1
+        self.draw_particles(p, np.arange(10))
 
 
-class MglGUIEvent(Mdgl2d):
+class SimpleInterfaceInteractive(Renderer2D):
+    """
+    A simple interface as demo
+    Can take input from mouse and keyboard
+    """
+    title = "Simple Interface Template with Interaction"
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def render(self, time, frame_time):
+        self.ctx.clear(1.0, 1.0, 1.0)
+        self.ctx.enable(moderngl.BLEND | moderngl.PROGRAM_POINT_SIZE)
+        self.draw_grid()
+        p = np.random.rand(10, 2) * 2 - 1
+        self.draw_particles(p, np.arange(10))
+
+    def map_wnd_to_gl(self, x, y):
+        return x / self.wnd.width * 2 - 1, 1 - y / self.wnd.height * 2
+
+    def mouse_press_event(self, x, y, button):
+        fixed_x, fixed_y = self.map_wnd_to_gl(x, y)
+        print(f"mouse press at {fixed_x}, {fixed_y}")
+
+    def mouse_position_event(self, x, y, dx, dy):
+        fixed_x, fixed_y = self.map_wnd_to_gl(x, y)
+        print(f"mouse move to {fixed_x}, {fixed_y}")
+
+    def mouse_drag_event(self, x, y, dx, dy):
+        fixed_x, fixed_y = self.map_wnd_to_gl(x, y)
+        print(f"mouse drag to {fixed_x}, {fixed_y}")
+
+
+# TODO: make the structure more clear
+class SimpleInterfaceWithImgui(Renderer2D):
+    """
+    A simple interface template using imgui
+    """
+    title = "Simple Interface Template with Imgui"
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -85,14 +115,10 @@ class MglGUIEvent(Mdgl2d):
 
     def mouse_press_event(self, x, y, button):
         self.imgui.mouse_press_event(x, y, button)
+        print("new x, y:", self.map_wnd_to_gl(x, y))
 
     def mouse_release_event(self, x: int, y: int, button: int):
         self.imgui.mouse_release_event(x, y, button)
 
     def unicode_char_entered(self, char):
         self.imgui.unicode_char_entered(char)
-
-
-if __name__ == "__main__":
-    # Mdgl2d.run()
-    MglGUIEvent.run()

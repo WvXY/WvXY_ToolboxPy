@@ -1,6 +1,6 @@
 import numpy as np
 
-
+# TODO: rewrite it
 class Grid:
     def __init__(self, xmin=-50, xmax=50, ymin=-50, ymax=50, N=256):
         self.N = N

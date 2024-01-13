@@ -1,9 +1,10 @@
 from time import time
+
 import moderngl
 import numpy as np
 from pyrr import Matrix44
 
-from .MdglWindow import Window
+from .mdgl_window import Window
 
 
 class Mdgl3d(Window):
@@ -102,11 +103,11 @@ class Mdgl3d(Window):
         vao.render(moderngl.TRIANGLES)
 
     def draw_circle(
-        self,
-        center: np.ndarray,
-        radius: np.float32,
-        n=64,
-        color=np.array([0.0, 0.0, 0.0]),
+            self,
+            center: np.ndarray,
+            radius: np.float32,
+            n=64,
+            color=np.array([0.0, 0.0, 0.0]),
     ):
         angle = np.linspace(0, 2 * np.pi, n)
         p = center + radius * np.array([np.cos(angle), np.sin(angle)]).T

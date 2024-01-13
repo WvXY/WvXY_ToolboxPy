@@ -28,3 +28,6 @@ build/
 *.log
 *.sqlite
 *.db
+
+# imgui
+*.ini

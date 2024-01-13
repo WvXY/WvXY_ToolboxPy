@@ -1,16 +1,16 @@
 from . import (
-    MdglWindow,
-    Mdgl2d,
-    MdglUtils2d,
-    Mdgl3d,
+    mdgl_window,
+    mdgl_utils,
+    renderer_2d,
+    renderer_3d,
     Texture
 )
 
 __all__ = [
-    "MdglWindow",
-    "Mdgl2d",
-    "MdglUtils2d",
-    "Mdgl3d"
+    "mdgl_window",
+    "mdgl_utils",
+    "renderer_2d",
+    "renderer_3d"
 ]
 
 

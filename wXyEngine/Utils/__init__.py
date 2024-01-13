@@ -1,4 +1,4 @@
 __all__ = (
-    "DistFunc",
-    "GeoOps"
+    "distance_func.py",
+    "sdf_ops.py"
 )
