@@ -20,3 +20,11 @@ The engine is divided into several modules:
 ## TODO
 - [ ] Add a proper README.md
 - [ ] Rename class and submodule names to be more consistent
+
+### Dependencies
+
+##### Save dependencies
+
+```conda
+conda env export -n FloorPlanRsh > environment.yml
+```
