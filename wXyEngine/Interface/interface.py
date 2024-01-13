@@ -62,6 +62,8 @@ class SimpleInterfaceInteractive(Renderer2D):
 class SimpleInterfaceWithImgui(Renderer2D):
     """
     A simple interface template using imgui
+    Don't forget to override the render_ui function
+    and call self.render_ui() in render function
     """
     title = "Simple Interface Template with Imgui"
 
@@ -100,7 +102,7 @@ class SimpleInterfaceWithImgui(Renderer2D):
         super().render(time, frame_time)
         self.render_ui()
 
-    # ---------------imgui functions-------------------
+    # --------------- event functions -------------------
     def key_event(self, key, action, modifiers):
         self.imgui.key_event(key, action, modifiers)
 
