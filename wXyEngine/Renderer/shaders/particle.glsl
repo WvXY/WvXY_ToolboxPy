@@ -34,13 +34,13 @@ in vec3 frag_color;
 out vec4 out_color;
 
 void main() {
-    float dist = smoothstep(0.0, 0.5,
-        distance(gl_PointCoord.xy, vec2(0.5)));
-    out_color = vec4(frag_color, cos(dist * HALF_PI));
+//    float dist = smoothstep(0.0, 0.5,
+//        distance(gl_PointCoord.xy, vec2(0.5)));
+//    out_color = vec4(frag_color, cos(dist * HALF_PI));
     // out_color = vec4(frag_color, 1.0 - dist * dist);
 
-    // float dist = step(0.5, distance(gl_PointCoord.xy, vec2(0.5)));
-    // out_color = vec4(frag_color,  1.0 - dist);
+     float dist = step(0.5, distance(gl_PointCoord.xy, vec2(0.5)));
+     out_color = vec4(frag_color,  1.0 - dist);
 }
 
 #endif

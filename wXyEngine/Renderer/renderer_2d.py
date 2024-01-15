@@ -62,19 +62,30 @@ class Renderer2D(Window):
         vao.render(moderngl.LINES)
         self.release_resources(grid_buffer, color_buffer, vao)
 
-    def draw_particles(self, vertices, indices, point_size=40):
+    def draw_particles(self, vertices: np.ndarray, indices=None, point_size=40):
         self.particle_prog["point_size"].value = point_size
         vertices_buffer = self.ctx.buffer(np.array(vertices, dtype='f4'))
-        indices_buffer = self.ctx.buffer(np.array(indices, dtype='i4'))
+        has_indices = indices is not None
 
-        vao_content = [
-            (vertices_buffer, "2f", 0),
-            (indices_buffer, "1i", 1),
-        ]
+        if has_indices:
+            indices_buffer = self.ctx.buffer(np.array(indices, dtype='i4'))
+            vao_content = [
+                (vertices_buffer, "2f", 0),
+                (indices_buffer, "1i", 1),
+            ]
+        else:
+            vao_content = [
+                (vertices_buffer, "2f", 0),
+                # (indices_buffer, "1i /r", 1), # maybe specify a color
+            ]
 
-        self.vao = self.ctx.vertex_array(self.particle_prog, vao_content)
-        self.vao.render(moderngl.POINTS)
-        self.release_resources(self.vao, indices_buffer, vertices_buffer)
+        vao = self.ctx.vertex_array(self.particle_prog, vao_content)
+        vao.render(moderngl.POINTS)
+
+        if has_indices:
+            self.release_resources(vao, vertices_buffer, indices_buffer)
+        else:
+            self.release_resources(vao, vertices_buffer)
 
     def draw_rectangles(self, center: np.ndarray, shape: np.ndarray):   # TODO: optimize this
         vert = np.array([], dtype=np.float32)

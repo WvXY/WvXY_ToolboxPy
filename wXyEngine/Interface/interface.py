@@ -47,15 +47,15 @@ class SimpleInterfaceInteractive(Renderer2D):
 
     def mouse_press_event(self, x, y, button):
         fixed_x, fixed_y = self.map_wnd_to_gl(x, y)
-        print(f"mouse press at {fixed_x}, {fixed_y}")
+        # print(f"mouse press at {fixed_x}, {fixed_y}")
 
     def mouse_position_event(self, x, y, dx, dy):
         fixed_x, fixed_y = self.map_wnd_to_gl(x, y)
-        print(f"mouse move to {fixed_x}, {fixed_y}")
+        # print(f"mouse move to {fixed_x}, {fixed_y}")
 
     def mouse_drag_event(self, x, y, dx, dy):
         fixed_x, fixed_y = self.map_wnd_to_gl(x, y)
-        print(f"mouse drag to {fixed_x}, {fixed_y}")
+        # print(f"mouse drag to {fixed_x}, {fixed_y}")
 
 
 # TODO: make the structure more clear
@@ -117,7 +117,7 @@ class SimpleInterfaceWithImgui(Renderer2D):
 
     def mouse_press_event(self, x, y, button):
         self.imgui.mouse_press_event(x, y, button)
-        print("new x, y:", self.map_wnd_to_gl(x, y))
+        # print("new x, y:", self.map_wnd_to_gl(x, y))
 
     def mouse_release_event(self, x: int, y: int, button: int):
         self.imgui.mouse_release_event(x, y, button)

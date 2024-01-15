@@ -13,7 +13,11 @@ class Transform2d:
 
     @property
     def mat3(self):
-        return self.transform.flatten().astype("f4")
+        return self.transform.astype("f4")
+
+    @property
+    def inv_mat3(self):
+        return np.linalg.inv(self.transform).astype("f4")
 
     def scale(self, x, y):
         self.transform = np.matmul(self.transform, np.diag([x, y, 1]))
@@ -28,6 +32,7 @@ class Transform2d:
     def offset(self, x, y):
         self.transform[2, 0] += x
         self.transform[2, 1] += y
+
 
 
 class Transform3d:
