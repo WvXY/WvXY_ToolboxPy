@@ -106,10 +106,11 @@ class Renderer2D(Window):
                 vert = np.append(vert, color)
 
         # start draw
-        self.vbo = self.ctx.buffer(vert.astype(np.float32))
-        self.vao = self.ctx.vertex_array(self.prog, self.vbo, "vert",
+        vbo = self.ctx.buffer(vert.astype(np.float32))
+        vao = self.ctx.vertex_array(self.prog, vbo, "vert",
                                          "vert_color")
-        self.vao.render(moderngl.TRIANGLES)
+        vao.render(moderngl.TRIANGLES)
+        self.release_resources(vao, vbo)
 
     def draw_polygon(self, vert: np.ndarray, color: np.ndarray):
         vert_buffer = self.ctx.buffer(vert.astype("f4"))
@@ -169,12 +170,11 @@ class Renderer2D(Window):
             i, j = edge
             vert = np.append(vert, nodes[i])
             vert = np.append(vert, nodes[j])
-        self.vbo = self.ctx.buffer(vert.astype(np.float32))
-        self.vao = self.ctx.vertex_array(self.prog, self.vbo, "vert")
-        self.vao.render(moderngl.LINES)
+        vbo = self.ctx.buffer(vert.astype(np.float32))
+        vao = self.ctx.vertex_array(self.prog, vbo, "vert")
+        vao.render(moderngl.LINES)
 
-        self.vao.release()
-        self.vbo.release()
+        self.release_resources(vao, vbo)
 
         self.draw_particles(
             nodes, np.ones(nodes.shape[0]), point_size=8)
