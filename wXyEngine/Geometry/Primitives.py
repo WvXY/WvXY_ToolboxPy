@@ -11,7 +11,7 @@ class Particle(_GameObject):
     def __init__(self, center, mass=1.0, damping=1.0):
         _GameObject.__init__(self)
 
-        self.center = torch.tensor(center)
+        self.center = torch.tensor(center, device=self.device)
         self.r = 0.0  # for relaxation
         self.inverseMass = 1.0 / mass if mass != 0 else 0.0
         self.damping = damping
@@ -22,9 +22,9 @@ class OrientedBox(_GameObject):
     def __init__(self, a: torch.Tensor, b: torch.Tensor, th):
         _GameObject.__init__(self)
 
-        self.a = nn.Parameter(a)
-        self.b = nn.Parameter(b)
-        self.th = nn.Parameter(torch.tensor(th))
+        self.a = nn.Parameter(a).to(self.device)
+        self.b = nn.Parameter(b).to(self.device)
+        self.th = nn.Parameter(torch.tensor(th, device=self.device))
 
         self.center = nn.Parameter((self.a + self.b) / 2.0)
         self.ba = self.b - self.a
@@ -43,25 +43,25 @@ class OrientedBox(_GameObject):
 class Circle(_GameObject):
     def __init__(self, radius, center):
         _GameObject.__init__(self)
-        self.center = center
-        self.radius = radius
+        self.center = torch.tensor(center, device=self.device)
+        self.radius = torch.tensor(radius, device=self.device)
 
 
 class Rectangle(_GameObject):
     def __init__(self, center, width, height, theta=0.0):
         _GameObject.__init__(self)
 
-        self.center = torch.tensor(center)
+        self.center = torch.tensor(center, device=self.device)
         self.width = width
         self.height = height
-        self.theta = torch.tensor(theta)
+        self.theta = torch.tensor(theta, device=self.device)
 
 
 class Line(_GameObject):
     def __init__(self, a, b, r=0.0):
         _GameObject.__init__(self)
-        self.a = torch.tensor(a, dtype=torch.float32)
-        self.b = torch.tensor(b, dtype=torch.float32)
+        self.a = torch.tensor(a, dtype=torch.float32, device=self.device)
+        self.b = torch.tensor(b, dtype=torch.float32, device=self.device)
         self.r = r
         self.direction = self.a - self.b
         self.length = torch.norm(self.direction)
@@ -70,8 +70,8 @@ class Line(_GameObject):
 class LineBox(_GameObject):
     def __init__(self, a, b, th):
         _GameObject.__init__(self)
-        self.a = torch.tensor(a, dtype=torch.float32)
-        self.b = torch.tensor(b, dtype=torch.float32)
+        self.a = torch.tensor(a, dtype=torch.float32, device=self.device)
+        self.b = torch.tensor(b, dtype=torch.float32, device=self.device)
         self.th = th
 
         self.ba, self.len, self.dir, self.center = (None, None, None, None)

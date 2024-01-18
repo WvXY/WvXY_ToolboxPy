@@ -1,15 +1,30 @@
+import numpy as np
+import torch
+
+
 class _GameObject:
-    GUID = -1
+    __GUID = 0
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    print(f"GameObject device: {device}")
 
     def __init__(self):
-        self.guid = _GameObject.GUID
-        _GameObject.GUID += 1
+        self.guid = _GameObject.__GUID
+        _GameObject.__GUID += 1
+        self._lib = torch   # TODO: switch library between torch and numpy
 
     def update(self, dt):
         pass
 
     def draw(self):
         pass
+
+    def switch_mode(self):
+        self._lib = np if self._lib == torch else torch
+        print(f"GameObject {self.guid} switched to {self._lib}")
+
+    @staticmethod
+    def set_global_torch_device(device):
+        _GameObject.device = device
 
 
 class GameObjectManager:
@@ -34,8 +49,12 @@ class GameObjectManager:
         print(f"GameObjectManager.get: guid {guid} not found")
         return None
 
+    def switch_mode(self):  # don't know if this works
+        for game_object in self.game_objects:
+            game_object.switch_mode()
+
     @staticmethod
     def reset_global_guid():
-        _GameObject.GUID = 0
+        _GameObject.__GUID = 0
 
 
