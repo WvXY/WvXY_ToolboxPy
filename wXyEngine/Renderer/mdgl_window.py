@@ -8,7 +8,7 @@ class Window(moderngl_window.WindowConfig):
     window_size = (1280, 720)
     aspect_ratio = 1280 / 720
     resizable = True
-    samples = 4  # anti-aliasing
+    samples = 8  # anti-aliasing
     cursor = True
     vsync = False
 

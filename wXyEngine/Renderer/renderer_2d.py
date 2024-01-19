@@ -37,13 +37,13 @@ class Renderer2D(Window):
 
     @staticmethod
     def make_grid(n=10):  # deprecate this
-        grid = np.array([], dtype=np.float32)
+        grid = np.array([], dtype="f4")
         for i in range(n * 2 + 1):
             grid = np.append(grid, [i - n, -n])
             grid = np.append(grid, [i - n, n])
             grid = np.append(grid, [-n, i - n])
             grid = np.append(grid, [n, i - n])
-        return (grid / n).astype(np.float32)
+        return (grid / n).astype("f4")
 
     # some drawing functions
     def draw_grid(self, color=None, n=10, scale=1.0):
@@ -62,11 +62,13 @@ class Renderer2D(Window):
         vao.render(moderngl.LINES)
         self.release_resources(grid_buffer, color_buffer, vao)
 
-    def draw_particles(self, vertices: np.ndarray, indices=None, point_size=40):
+    def draw_particles(self, vertices: np.ndarray,
+                       indices=None, point_size=40, use_circle=True):
         self.particle_prog["point_size"].value = point_size
+        self.particle_prog["use_circle"].value = use_circle
         vertices_buffer = self.ctx.buffer(np.array(vertices, dtype='f4'))
-        has_indices = indices is not None
 
+        has_indices = indices is not None
         if has_indices:
             indices_buffer = self.ctx.buffer(np.array(indices, dtype='i4'))
             vao_content = [
@@ -87,8 +89,8 @@ class Renderer2D(Window):
         else:
             self.release_resources(vao, vertices_buffer)
 
-    def draw_rectangles(self, center: np.ndarray, shape: np.ndarray):   # TODO: optimize this
-        vert = np.array([], dtype=np.float32)
+    def draw_rectangles(self, center: np.ndarray, shape: np.ndarray):  # TODO: optimize this
+        vert = np.array([], dtype="f4")
         n = center.shape[0]
         np.random.seed(1)  # random color
         for i in range(n):
@@ -106,9 +108,9 @@ class Renderer2D(Window):
                 vert = np.append(vert, color)
 
         # start draw
-        vbo = self.ctx.buffer(vert.astype(np.float32))
+        vbo = self.ctx.buffer(vert.astype("f4"))
         vao = self.ctx.vertex_array(self.prog, vbo, "vert",
-                                         "vert_color")
+                                    "vert_color")
         vao.render(moderngl.TRIANGLES)
         self.release_resources(vao, vbo)
 
@@ -130,14 +132,14 @@ class Renderer2D(Window):
         self.vao.render(moderngl.LINE_LOOP)
         self.release_resources(self.vao, vert_buffer, color_buffer)
 
-    def draw_circle(self, center: np.ndarray, radius: np.float32,
+    def draw_circle(self, center: np.ndarray, radius: float,
                     n_div=12, color=np.array([0.0, 0.0, 0.0])):
         angle = np.linspace(0, 2 * np.pi, n_div)
         p = center + radius * np.array([np.cos(angle), np.sin(angle)]).T
         p = np.insert(p, 0, center, axis=0)
         vert = np.hstack((p, np.tile(color, (n_div + 1, 1))))
 
-        self.vbo = self.ctx.buffer(vert.astype(np.float32))
+        self.vbo = self.ctx.buffer(vert.astype("f4"))
         self.vao = self.ctx.vertex_array(self.prog, self.vbo, "vert",
                                          "vert_color")
         self.vao.render(moderngl.TRIANGLE_FAN)
@@ -147,7 +149,7 @@ class Renderer2D(Window):
             raise ValueError("adj.shape[0] != center.shape[0]")
 
         n = p.shape[0]
-        vert = np.array([], dtype=np.float32)
+        vert = np.array([], dtype="f4")
         color = np.array([0.1, 0.0, 0.1])
         for i in range(n):
             for j in range(i + 1, n):
@@ -158,23 +160,22 @@ class Renderer2D(Window):
                     vert = np.append(vert, color)
 
         # print(vert.shape)
-        self.vbo = self.ctx.buffer(vert.astype(np.float32))
+        self.vbo = self.ctx.buffer(vert.astype("f4"))
         self.vao = self.ctx.vertex_array(self.prog, self.vbo, "vert",
                                          "vert_color")
         self.vao.render(moderngl.LINES)
 
-    def draw_graph(self, nodes, edges):     # TODO: optimize this
-        # self.draw_connections(nodes, adj)
-        vert = np.array([], dtype=np.float32)
+    def draw_graph(self, vertices, edges):  # TODO: optimize this
+        vert = np.array([], dtype="f4")
         for edge in edges:
             i, j = edge
-            vert = np.append(vert, nodes[i])
-            vert = np.append(vert, nodes[j])
-        vbo = self.ctx.buffer(vert.astype(np.float32))
+            vert = np.append(vert, vertices[i])
+            vert = np.append(vert, vertices[j])
+        vbo = self.ctx.buffer(vert.astype("f4"))
         vao = self.ctx.vertex_array(self.prog, vbo, "vert")
         vao.render(moderngl.LINES)
 
         self.release_resources(vao, vbo)
 
         self.draw_particles(
-            nodes, np.ones(nodes.shape[0]), point_size=8)
+            vertices, np.ones(vertices.shape[0]), point_size=8)
