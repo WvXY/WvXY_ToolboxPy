@@ -2,7 +2,11 @@ import numpy as np
 
 
 class Transform2d:
-    def __init__(self, scale=[1.0, 1.0], offset=[0., 0.], rotation=0.):
+    def __init__(self, scale=None, offset=None, rotation=0.):
+        if scale is None:
+            scale = [1.0, 1.0]
+        if offset is None:
+            offset = [0., 0.]
         self.transform = np.eye(3, dtype=np.float32)
         self.scale(*scale)
         self.rotate(rotation)

@@ -12,10 +12,16 @@ class _GameObject:
         _GameObject.__GUID += 1
         self._lib = torch   # TODO: switch library between torch and numpy
 
+        self.min, self.max = None, None
+        self.get_min_max()
+
     def update(self, dt):
         pass
 
     def draw(self):
+        pass
+
+    def get_min_max(self):  # for AABB
         pass
 
     def switch_mode(self):

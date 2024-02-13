@@ -20,7 +20,7 @@ class MyTestCase(unittest.TestCase):
         import wXyEngine.Geometry as Geometry
 
         P = Geometry.Primitives.Particle([0, 0])
-        for c in P.center:
+        for c in P.pos:
             self.assertEqual(c, 0)
 
     def test_game_object_manager(self):
