@@ -16,7 +16,7 @@ class MyTestCase(unittest.TestCase):
         game_objs.add(Rectangle([0, 0], 2, 2))
         game_objs.add(Line([0, 0], [1, 1]))
         game_objs.add(Line([0, 0], [1, 1]))
-        game_objs.add(Particle([1,2]))
+        game_objs.add(Particle([1, 2]))
 
         for obj in game_objs.game_objects:
             print(obj.min, obj.max)
