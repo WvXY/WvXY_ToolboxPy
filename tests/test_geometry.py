@@ -10,7 +10,7 @@ class TestPytorchGeometry(unittest.TestCase):
 
     def test_cuda(self):
         P = Particle([0, 0])
-        self.assertEqual(P.center.device, torch.device("cuda:0"))
+        self.assertEqual(P.pos.device, torch.device("cuda:0"))
 
     def test_cuda2(self):
         a, b = torch.tensor([0., 0.]), torch.tensor([1., 1.])
