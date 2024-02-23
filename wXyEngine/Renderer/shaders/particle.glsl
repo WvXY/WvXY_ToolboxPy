@@ -18,9 +18,9 @@ out vec3 frag_color;
 
 void main() {
     frag_color = vec3(
-    mod(vert_id * 432.43, 1.0),
-    mod(vert_id * 6654.32, 1.0),
-    mod(vert_id * 6544.11, 1.0)
+    mod(vert_id * 132.43, 1.0),
+    mod(vert_id * 323.32, 1.0),
+    mod(vert_id * 734.11, 1.0)
     );
     vec3 pos = transform * vec3(vert, 1.0);
     gl_Position = vec4(pos.xy, 0.0, 1.0);
