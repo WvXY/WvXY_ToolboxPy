@@ -1,4 +1,1 @@
-__all__ = (
-    "distance_func.py",
-    "sdf_ops.py"
-)
+__all__ = ("distance_func", "sdf_ops")

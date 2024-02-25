@@ -1,16 +1,17 @@
 import numpy as np
 import torch
 
+from wXyEnginePy.wXyEngine import TORCH_DEVICE
+
 
 class _GameObject:
     __GUID = 0
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    print(f"GameObject device: {device}")
+    device = TORCH_DEVICE
 
     def __init__(self):
         self.guid = _GameObject.__GUID
         _GameObject.__GUID += 1
-        self._lib = torch   # TODO: switch library between torch and numpy
+        self._lib = torch  # TODO: switch library between torch and numpy
 
         self.min, self.max = None, None
         self.get_min_max()
@@ -62,5 +63,3 @@ class GameObjectManager:
     @staticmethod
     def reset_global_guid():
         _GameObject.__GUID = 0
-
-
