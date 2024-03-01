@@ -103,11 +103,11 @@ class Mdgl3d(Window):
         vao.render(moderngl.TRIANGLES)
 
     def draw_circle(
-            self,
-            center: np.ndarray,
-            radius: np.float32,
-            n=64,
-            color=np.array([0.0, 0.0, 0.0]),
+        self,
+        center: np.ndarray,
+        radius: np.float32,
+        n=64,
+        color=np.array([0.0, 0.0, 0.0]),
     ):
         angle = np.linspace(0, 2 * np.pi, n)
         p = center + radius * np.array([np.cos(angle), np.sin(angle)]).T
@@ -148,7 +148,9 @@ class Mdgl3d(Window):
     def set_mvp(self, camera_pos, angle):
         # camera_pos = (np.cos(angle) * 3.0, np.sin(angle) * 3.0, 2.0)
 
-        proj = Matrix44.perspective_projection(80.0, self.aspect_ratio, 0.1, 100.0)
+        proj = Matrix44.perspective_projection(
+            80.0, self.aspect_ratio, 0.1, 100.0
+        )
         lookat = Matrix44.look_at(
             camera_pos,
             (0.0, 0.0, 0.5),

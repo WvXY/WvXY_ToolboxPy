@@ -56,6 +56,14 @@ class Circle(_GameObject):
         self.min = self.center - self.radius
         self.max = self.center + self.radius
 
+    # @property
+    # def min(self):
+    #     return self.center - self.radius
+    #
+    # @property
+    # def max(self):
+    #     return self.center + self.radius
+
 
 class Rectangle(_GameObject):
     def __init__(self, center, width, height, theta=0.0):

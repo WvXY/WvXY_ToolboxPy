@@ -1,16 +1,23 @@
 import numpy as np
+import torch
 
 
 # boolean operations
 def sdUnion(a, b):
+    if isinstance(a, torch.Tensor):
+        return torch.minimum(a, b)
     return np.minimum(a, b)
 
 
 def sdIntersection(a, b):
+    if isinstance(a, torch.Tensor):
+        return torch.maximum(a, b)
     return np.maximum(a, b)
 
 
 def sdDifference(a, b):
+    if isinstance(a, torch.Tensor):
+        return torch.maximum(a, -b)
     return np.maximum(a, -b)
 
 
@@ -113,4 +120,3 @@ class MarchingSquare:
                     index = self.get_square_index(i, j)
                     pass
         return np.array(points)
-

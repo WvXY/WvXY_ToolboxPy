@@ -73,12 +73,12 @@ class SdParticle(Particle):
 class SdCircle(Circle):
     def __init__(self, radius, center):
         super().__init__(radius, center)
-        self.center = torch.tensor(center)
+        self.center = torch.tensor(center, device=self.device)
         self.r = None
 
     def sd(self, p, r=None) -> float:
         self.r = self.r if r is None else r
-        return torch.norm(p - self.center, dim=-1) - self.radius - r
+        return torch.norm(p - self.center, dim=-1) - self.radius - self.r
 
 
 class SdRectangle(Rectangle):
@@ -89,16 +89,14 @@ class SdRectangle(Rectangle):
 
     def __repr__(self) -> str:
         return (
-            f"center: {self.center}, " f"width: {self.width}, " f"height: {self.height}"
+            f"center: {self.center}, width: {self.width}, height: {self.height}"
         )
 
     def correct_position(self, point):
-        R = torch.tensor(
-            [
-                [torch.cos(self.theta), -torch.sin(self.theta)],
-                [torch.sin(self.theta), torch.cos(self.theta)],
-            ]
-        )
+        R = torch.tensor([
+            [torch.cos(self.theta), -torch.sin(self.theta)],
+            [torch.sin(self.theta), torch.cos(self.theta)],
+        ])
         point_rotated = (point - self.center) @ R.T  # not sure if it is correct
         return point_rotated
 
@@ -108,15 +106,15 @@ class SdRectangle(Rectangle):
         dx = torch.abs(point_corrected[0]) - self.width / 2.0
         dy = torch.abs(point_corrected[1]) - self.height / 2.0
         return (
-                torch.minimum(torch.maximum(dx, dy), torch.tensor(0))
-                + torch.norm(
-            torch.stack(
-                [torch.fmax(dx, torch.tensor(0)),
-                 torch.fmax(dy, torch.tensor(0))]
-            ),
-            dim=0,
-        )
-                - r
+            torch.minimum(torch.maximum(dx, dy), torch.tensor(0))
+            + torch.norm(
+                torch.stack([
+                    torch.fmax(dx, torch.tensor(0)),
+                    torch.fmax(dy, torch.tensor(0)),
+                ]),
+                dim=0,
+            )
+            - r
         )  # inside + outside
 
 
@@ -146,14 +144,17 @@ class SdLineBox(LineBox):
 
     def sd(self, p):
         if p.shape == (1, 2):
-            p = p.reshape(2, )
+            p = p.reshape(
+                2,
+            )
 
         self.updateParams()
         pa = p - self.a
 
         if 0 <= self.ba.dot(pa) / self.len <= 1:  # (a,b)
-            return torch.norm(
-                torch.cross(self.ba, pa)) / self.len - self.th / 2.0
+            return (
+                torch.norm(torch.cross(self.ba, pa)) / self.len - self.th / 2.0
+            )
         else:
             ac = torch.abs(pa.dot(self.ba)) / self.len
             v = torch.tensor([self.ba[1], -self.ba[0]])
@@ -174,8 +175,10 @@ class SdLineBox(LineBox):
         h = torch.clip(torch.dot(pa, self.dir), 0, self.len)
 
         # Distance calculation
-        dist = torch.norm(pa - self.dir * h[:, torch.newaxis],
-                          dim=1) - self.th / 2.0
+        dist = (
+            torch.norm(pa - self.dir * h[:, torch.newaxis], dim=1)
+            - self.th / 2.0
+        )
         return dist
 
     # def grad(self, p):
@@ -214,12 +217,10 @@ class SdLineBox(LineBox):
 
     def rotate(self, theta):
         """Rotate theta around center"""
-        R = torch.tensor(
-            [
-                [torch.cos(theta), -torch.sin(theta)],
-                [torch.sin(theta), torch.cos(theta)],
-            ]
-        )
+        R = torch.tensor([
+            [torch.cos(theta), -torch.sin(theta)],
+            [torch.sin(theta), torch.cos(theta)],
+        ])
         self.a = R @ (self.a - self.center) + self.center
         self.b = R @ (self.b - self.center) + self.center
 

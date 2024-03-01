@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 
-from wXyEnginePy.wXyEngine import TORCH_DEVICE
+from wXyEngine import TORCH_DEVICE
 
 
 class _GameObject:
