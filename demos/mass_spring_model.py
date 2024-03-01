@@ -3,7 +3,7 @@ from time import time
 import moderngl
 import numpy as np
 
-from wXyEngine.Interface import SimpleInterface
+from wXyEngine.Renderer.mdgl_window import Window
 from wXyEngine.Physics.dynamics import MassSpringSystem
 
 # TODO: integrate this with the Physics module
@@ -11,7 +11,7 @@ from wXyEngine.Physics.dynamics import MassSpringSystem
 # ======================================================
 n = 20  # number of rooms
 dim = 2  # dimension
-c = np.random.rand(n, dim) * 20  # center of rooms
+c = np.random.rand(n, dim) * 10  # center of rooms
 # np.random.rand(12)
 s = np.random.rand(n, dim) * 8 + 1  # size of rooms
 s = np.stack(s, dtype=np.float32)
@@ -22,7 +22,7 @@ adj = np.triu(adj, 1) + np.tril(adj, -1)
 # -----------------visualization------------------------
 
 
-class GLVisualization(SimpleInterface):
+class GLVisualization(Window):
     gl_version = (3, 3)
     title = "Layout Optimization"
 
