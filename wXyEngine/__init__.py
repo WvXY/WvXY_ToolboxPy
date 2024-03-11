@@ -1,3 +1,7 @@
+import sys
+
+sys.path.append("../wXyEnginePy")
+
 # import libraries
 import moderngl
 import moderngl_window as mglw
