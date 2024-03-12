@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from del_msh import TriMesh, PolyLoop
 
-from wXyEngine import TORCH_DEVICE as device
+from .. import TORCH_DEVICE as device
 
 torch.set_default_dtype(torch.float64)
 

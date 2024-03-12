@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 
-from wXyEngine import TORCH_DEVICE
+from .. import TORCH_DEVICE
 
 
 class _GameObject:
@@ -11,7 +11,7 @@ class _GameObject:
     def __init__(self):
         self.guid = _GameObject.__GUID
         _GameObject.__GUID += 1
-        self._lib = torch  # TODO: switch library between torch and numpy
+        self._lib = torch  # TODO: remove numpy dependency
 
         self.min, self.max = None, None
         self.get_min_max()
