@@ -2,7 +2,7 @@
 
 ## Description
 
-A tiny 2D game engine written in Python using Moderngl
+A tiny 2D game engine written in Python using ModernGL
 
 It derived from my master thesis project.
 It is currently under development and not ready for use.
@@ -33,7 +33,7 @@ pip install -r requirements.txt
 
 ```zsh
 python3 -m venv venv
-zsh ./venv/bin/activate
+bash ./venv/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -42,14 +42,14 @@ pip install -r requirements.txt
 Install [miniconda](https://docs.conda.io/en/latest/miniconda.html) first.
 
 ```zsh
-conda create -n floorplan-conda python=3.11 numpy scipy matplotlib
-conda activate floorplan-conda
+conda create -n wXyEngine-conda python=3.11 numpy scipy matplotlib
+conda activate wXyEngine-conda
 pip install del-msh imgui moderngl moderngl-window pygmsh
 conda install pytorch torchvision torchaudio pytorch-cuda>=12.1 -c pytorch -c nvidia
 conda install conda-forge::pygalmesh 
 ```
 
-#### Add and init submodules
+#### (Optional)Add and init as submodule
 
 ```zsh
 git clone git@github.com:WvXY/wXyEnginePy.git
