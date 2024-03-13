@@ -2,7 +2,7 @@ import torch
 import numpy as np
 from numpy.linalg import norm
 
-from wXyEngine import TORCH_DEVICE as device
+from .. import TORCH_DEVICE as device
 
 # Under construction....
 

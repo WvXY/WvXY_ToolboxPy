@@ -33,7 +33,7 @@ __all__ = list(
 )
 
 print("\033[92m[wXyEnginePy] Successfully imported")
-print(f"[wXyEnginePy] Using torch device: {TORCH_DEVICE}\033[0m")
+print(f"[wXyEnginePy] PyTorch device: {TORCH_DEVICE}\033[0m")
 
 
 def __getattr__(name):
