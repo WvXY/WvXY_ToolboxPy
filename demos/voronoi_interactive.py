@@ -16,7 +16,7 @@ from wXyEngine.Utils.optimize_utils import (
 
 MULTI_SITES = False
 DEVICE = TORCH_DEVICE
-p = 2**0
+p = 2 ** 0
 
 if p == 1:
     print("Using manhattan distance")
@@ -66,9 +66,9 @@ class Group:
 
 class Voronoi:
     def __init__(
-        self,
-        bubble_diagram: Diagram,
-        boundary: Boundary,
+            self,
+            bubble_diagram: Diagram,
+            boundary: Boundary,
     ):
         self.diagram = bubble_diagram
         self.n_sites = bubble_diagram.nodes.shape[0] * 5
@@ -116,9 +116,9 @@ class Voronoi:
 
 
 def Lloyd_relaxation(
-    sites: torch.Tensor,
-    sample_points: torch.Tensor,
-    sp_site_idx=None,
+        sites: torch.Tensor,
+        sample_points: torch.Tensor,
+        sp_site_idx=None,
 ):
     sites = sites.clone().detach()
     site_new = torch.zeros_like(sites, device=DEVICE)
@@ -142,20 +142,13 @@ class Draw(SimpleInterfaceInteractive):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        # imgui.create_context()
-        # self.wnd.ctx.error
-        # self.imgui = ModernglWindowRenderer(self.wnd)
-
         global voronoi
         self.voronoi = voronoi
 
-        self.transform = Transform2d(scale=[0.12, 0.12], offset=[0, 0])
-        self.prog["transform"].value = self.transform.mat3.flatten().astype(
-            "f4"
-        )
-        self.particle_prog["transform"].value = (
-            self.transform.mat3.flatten().astype("f4")
-        )
+        self.tsfm = Transform2d()
+        self.tsfm.scale(0.12, 0.12)
+        self.prog["transform"].value = self.tsfm.mat3.flatten(order="F")
+        self.particle_prog["transform"].value = self.tsfm.mat3.flatten("F")
 
         self.sp = boundary.sample_inside(n=20000, inplace=False, device=DEVICE)
         self.sp_site_idx = set_points_to_groups(
@@ -170,9 +163,8 @@ class Draw(SimpleInterfaceInteractive):
         global MULTI_SITES
         if button == 1:
             fixed_x, fixed_y = self.map_wnd_to_gl(x, y)
-            transformed_xy = self.transform.inv_mat3 @ np.array([
-                fixed_x, fixed_y, 1
-            ])
+            transformed_xy = self.tsfm.inv_mat3 @ np.array(
+                [fixed_x, fixed_y, 1])
             voronoi.diagram.add_node([transformed_xy[0], transformed_xy[1]])
         if button == 2:
             MULTI_SITES = not MULTI_SITES
@@ -187,15 +179,6 @@ class Draw(SimpleInterfaceInteractive):
             self.sp_site_idx = map_indices(
                 self.sp_site_idx, voronoi.site_group_idx
             )
-
-    # def key_event(self, key: Any, action: Any, modifiers: KeyModifiers):
-    #     keys = self.wnd.keys
-    #
-    #     if action == keys.ACTION_PRESS:
-    #         print(f"key: {key}")
-    #
-    #     if key != 122:  # z
-    #         return
 
     def lloyd_relaxation(self):
         voronoi.sites = Lloyd_relaxation(
