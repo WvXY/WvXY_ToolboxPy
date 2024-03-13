@@ -20,19 +20,19 @@ class Transform2d:  # order matters
         self.transform = np.diag([x, y, 1]) @ self.transform
 
     def rotate(self, theta):
-        self.transform = np.array([
-            [np.cos(theta), -np.sin(theta), 0],
-            [np.sin(theta), np.cos(theta), 0],
-            [0, 0, 1]
-        ]) @ self.transform
+        self.transform = (
+            np.array([
+                [np.cos(theta), -np.sin(theta), 0],
+                [np.sin(theta), np.cos(theta), 0],
+                [0, 0, 1],
+            ])
+            @ self.transform
+        )
 
     def translate(self, x, y):
-        self.transform = np.array([
-            [1, 0, x],
-            [0, 1, y],
-            [0, 0, 1]
-        ]) @ self.transform
-
+        self.transform = (
+            np.array([[1, 0, x], [0, 1, y], [0, 0, 1]]) @ self.transform
+        )
 
 
 class Transform3d:

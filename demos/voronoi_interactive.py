@@ -16,7 +16,7 @@ from wXyEngine.Utils.optimize_utils import (
 
 MULTI_SITES = False
 DEVICE = TORCH_DEVICE
-p = 2 ** 0
+p = 2**0
 
 if p == 1:
     print("Using manhattan distance")
@@ -66,9 +66,9 @@ class Group:
 
 class Voronoi:
     def __init__(
-            self,
-            bubble_diagram: Diagram,
-            boundary: Boundary,
+        self,
+        bubble_diagram: Diagram,
+        boundary: Boundary,
     ):
         self.diagram = bubble_diagram
         self.n_sites = bubble_diagram.nodes.shape[0] * 5
@@ -116,9 +116,9 @@ class Voronoi:
 
 
 def Lloyd_relaxation(
-        sites: torch.Tensor,
-        sample_points: torch.Tensor,
-        sp_site_idx=None,
+    sites: torch.Tensor,
+    sample_points: torch.Tensor,
+    sp_site_idx=None,
 ):
     sites = sites.clone().detach()
     site_new = torch.zeros_like(sites, device=DEVICE)
@@ -163,8 +163,9 @@ class Draw(SimpleInterfaceInteractive):
         global MULTI_SITES
         if button == 1:
             fixed_x, fixed_y = self.map_wnd_to_gl(x, y)
-            transformed_xy = self.tsfm.inv_mat3 @ np.array(
-                [fixed_x, fixed_y, 1])
+            transformed_xy = self.tsfm.inv_mat3 @ np.array([
+                fixed_x, fixed_y, 1
+            ])
             voronoi.diagram.add_node([transformed_xy[0], transformed_xy[1]])
         if button == 2:
             MULTI_SITES = not MULTI_SITES
