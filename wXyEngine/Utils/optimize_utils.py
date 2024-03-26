@@ -49,7 +49,7 @@ def set_points_to_groups(
             torch.abs(points[:, None, :] - groups[None, :, :]) ** p,
             dim=2,
         )
-    idx = torch.argmin(torch.mul(dist, weight), dim=1)
+    idx = torch.argmin(dist**2 - weight**2, dim=1)
 
     if _numpy:
         idx = idx.cpu().numpy()

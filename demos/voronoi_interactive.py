@@ -16,7 +16,8 @@ from wXyEngine.Utils.optimize_utils import (
 
 MULTI_SITES = False
 DEVICE = TORCH_DEVICE
-p = 2**0
+use_case = 4
+p = 2**1
 
 if p == 1:
     print("Using manhattan distance")
@@ -31,19 +32,17 @@ else:
 # --------------------------------------------------------------------------
 class Diagram:  # TODO: optimize this / better structure
     def __init__(self):
-        self.nodes = torch.empty((0, 2), device=DEVICE)
-        self.weight = torch.empty((0, 1), device=DEVICE)
+        self.nodes = torch.empty((0, 3), device=DEVICE)  # [x, y, w]
         self.edges = []
         self.adj = {}
 
-    def add_node(self, node, weight=1.0):
+    def add_node(self, node):
         self.nodes = torch.cat(
             (
                 self.nodes,
                 torch.tensor([node], device=DEVICE),
             )
         )
-        # self.weight = torch.append(self.weight, torch.tensor([weight]))
 
     def add_edge(self, i, j):
         self.edges.append([i, j])
@@ -66,9 +65,9 @@ class Group:
 
 class Voronoi:
     def __init__(
-        self,
-        bubble_diagram: Diagram,
-        boundary: Boundary,
+            self,
+            bubble_diagram: Diagram,
+            boundary: Boundary,
     ):
         self.diagram = bubble_diagram
         self.n_sites = bubble_diagram.nodes.shape[0] * 5
@@ -116,16 +115,17 @@ class Voronoi:
 
 
 def Lloyd_relaxation(
-    sites: torch.Tensor,
-    sample_points: torch.Tensor,
-    sp_site_idx=None,
+        sites: torch.Tensor,
+        sample_points: torch.Tensor,
+        sp_site_idx=None,
 ):
     sites = sites.clone().detach()
     site_new = torch.zeros_like(sites, device=DEVICE)
     sample_points = sample_points.clone().detach()
     sp_site_idx = sp_site_idx.clone().detach()
     for i, site in enumerate(sites):
-        site_new[i] = torch.mean(sample_points[sp_site_idx == i], dim=0)
+        site_new[i, :2] = torch.mean(sample_points[sp_site_idx == i], dim=0)
+        site_new[i, 2] = site[2]
     return site_new
 
 
@@ -133,7 +133,7 @@ def Lloyd_relaxation(
 class Draw(SimpleInterfaceInteractive):
     gl_version = (4, 6)
     title = "Interactive Voronoi Demo"
-    vsync = False
+    vsync = True
     window_size = (800, 800)
     aspect_ratio = window_size[0] / window_size[1]
     resizable = True
@@ -150,9 +150,13 @@ class Draw(SimpleInterfaceInteractive):
         self.prog["transform"].value = self.tsfm.mat3.flatten(order="F")
         self.particle_prog["transform"].value = self.tsfm.mat3.flatten("F")
 
-        self.sp = boundary.sample_inside(n=20000, inplace=False, device=DEVICE)
+        self.sp = boundary.sample_inside(n=100000, inplace=False, device=DEVICE)
         self.sp_site_idx = set_points_to_groups(
-            self.sp, voronoi.sites, p=p, device=DEVICE
+            self.sp,
+            voronoi.sites[:, :2],
+            p=p,
+            device=DEVICE,
+            weight=voronoi.sites[:, 2],
         )
         if MULTI_SITES:
             self.sp_site_idx = map_indices(
@@ -166,14 +170,20 @@ class Draw(SimpleInterfaceInteractive):
             transformed_xy = self.tsfm.inv_mat3 @ np.array([
                 fixed_x, fixed_y, 1
             ])
-            voronoi.diagram.add_node([transformed_xy[0], transformed_xy[1]])
+            voronoi.diagram.add_node([
+                transformed_xy[0], transformed_xy[1], torch.rand(1) * 5
+            ])
         if button == 2:
             MULTI_SITES = not MULTI_SITES
             print(f"MULTI_SITES: {MULTI_SITES}")
 
         voronoi.refresh_groups()
         self.sp_site_idx = set_points_to_groups(
-            self.sp, voronoi.sites, p=p, device=DEVICE
+            self.sp,
+            voronoi.sites[:, :2],
+            p=p,
+            device=DEVICE,
+            weight=voronoi.sites[:, 2],
         )
 
         if MULTI_SITES:
@@ -185,11 +195,21 @@ class Draw(SimpleInterfaceInteractive):
         voronoi.sites = Lloyd_relaxation(
             voronoi.sites,
             self.sp,
-            set_points_to_groups(self.sp, voronoi.sites, p=p, device=DEVICE),
+            set_points_to_groups(
+                self.sp,
+                voronoi.sites[:, :2],
+                p=p,
+                device=DEVICE,
+                weight=voronoi.sites[:, 2],
+            ),
         )
 
         self.sp_site_idx = set_points_to_groups(
-            self.sp, voronoi.sites, p=p, device=DEVICE
+            self.sp,
+            voronoi.sites[:, :2],
+            p=p,
+            device=DEVICE,
+            weight=voronoi.sites[:, 2],
         )
 
         if MULTI_SITES:
@@ -215,6 +235,18 @@ class Draw(SimpleInterfaceInteractive):
             print("==Lloyd Relaxation==")
             self.lloyd_relaxation()
 
+        for i in range(voronoi.sites.shape[0]):
+            voronoi.sites[i, 2] = torch.sin(torch.tensor(time + i * 3)) * 4
+        voronoi.refresh_groups()
+        self.sp_site_idx = set_points_to_groups(
+            self.sp,
+            voronoi.sites[:, :2],
+            p=p,
+            device=DEVICE,
+            weight=voronoi.sites[:, 2],
+        )
+        self.lloyd_relaxation()
+
         # ---draw---
         self.draw_grid(scale=10, color=np.array([0.9, 0.9, 0.9]))
         self.draw_polygon(voronoi.boundary.vtx2xy, np.array([0, 0, 0]))
@@ -226,7 +258,7 @@ class Draw(SimpleInterfaceInteractive):
             # use_circle=False,
         )
         self.draw_particles(
-            voronoi.diagram.nodes.cpu(),
+            voronoi.sites.cpu()[..., :2],
             point_size=16,
             # use_circle=False,
         )
@@ -241,24 +273,13 @@ class Draw(SimpleInterfaceInteractive):
 
 
 if __name__ == "__main__":
-    use_case = 5
     vtx = Cases.boundary_vtx[use_case] - np.mean(
         Cases.boundary_vtx[use_case], axis=0
     )
-
     boundary = Boundary(vtx * 1.2 * 10)
-
     # --------------------------------------------------------------------------
     dgm = Diagram()
-    dgm.add_node([0, 0])
-    # dgm.add_node([0, -4])
-    # dgm.add_node([-3, 3])
-    # dgm.add_node([0, 0])
-    # dgm.add_node([3, 3])
-    # dgm.add_edge(0, 1)
-    # dgm.add_edge(1, 2)
+    dgm.add_node([0, 0, 0])
     # --------------------------------------------------------------------------
-
     voronoi = Voronoi(dgm, boundary)
-    # plt_draw(voronoi)
     Draw.run()
