@@ -1,10 +1,10 @@
-# wXyEnginePy(WIP)
+# MRPYET (WIP)
 
 ## Description
 
-A tiny 2D game engine written in Python using ModernGL
+A tiny 2D **game engine tool** written in Python using ModernGL
 
-It derived from my master thesis project.
+It derived from my **master research project**.
 It is currently under development and not ready for use.
 I will add more functions as my project progresses.
 
@@ -42,8 +42,8 @@ pip install -r requirements.txt
 Install [miniconda](https://docs.conda.io/en/latest/miniconda.html) first.
 
 ```zsh
-conda create -n wXyEngine-conda python=3.11 numpy scipy matplotlib
-conda activate wXyEngine-conda
+conda create -n mrpyet-conda python=3.11 numpy scipy matplotlib
+conda activate mrpyet-conda
 pip install del-msh imgui moderngl moderngl-window pygmsh
 conda install pytorch torchvision torchaudio pytorch-cuda>=12.1 -c pytorch -c nvidia
 conda install conda-forge::pygalmesh 
@@ -52,7 +52,7 @@ conda install conda-forge::pygalmesh
 #### (Optional)Add and init as submodule
 
 ```zsh
-git clone git@github.com:WvXY/wXyEnginePy.git
+git clone git@github.com:WvXY/mrpyet.git
 git submodule init
 git submodule update
 ```

@@ -11,10 +11,10 @@ class MyTestCase(unittest.TestCase):
         import wXyEngine.Physics as Physics
         import wXyEngine.Utils as Utils
 
-        self.assertEqual(Geometry.__name__, "wXyEngine.Geometry")
-        self.assertEqual(Renderer.__name__, "wXyEngine.Renderer")
-        self.assertEqual(Physics.__name__, "wXyEngine.Physics")
-        self.assertEqual(Utils.__name__, "wXyEngine.Utils")
+        self.assertEqual(Geometry.__name__, "mrpyet.Geometry")
+        self.assertEqual(Renderer.__name__, "mrpyet.Renderer")
+        self.assertEqual(Physics.__name__, "mrpyet.Physics")
+        self.assertEqual(Utils.__name__, "mrpyet.Utils")
 
     def test_create_geometry(self):
         import wXyEngine.Geometry as Geometry
@@ -56,10 +56,10 @@ class MyTestCase(unittest.TestCase):
                 game_objects.add(C)
 
         for i in range(100):
-            self.assertEqual(i+20, game_objects.get(i+20).guid)
+            self.assertEqual(i + 20, game_objects.get(i + 20).guid)
 
         del game_objects
 
-        
+
 if __name__ == '__main__':
     unittest.main()
