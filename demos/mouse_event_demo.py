@@ -1,4 +1,4 @@
-from wXyEngine.Interface.interface import SimpleInterface
+from PyMRT.Interface.interface import SimpleInterface
 import moderngl
 import numpy as np
 
@@ -19,7 +19,7 @@ class MouseEventDemo(SimpleInterface):
 
     def render(self, time: float, frame_time: float):
         self.ctx.clear(1.0, 1.0, 1.0)
-        self.ctx.enable(moderngl.BLEND|moderngl.PROGRAM_POINT_SIZE)
+        self.ctx.enable(moderngl.BLEND | moderngl.PROGRAM_POINT_SIZE)
 
         self.draw_grid()
         # self.draw_rectangles(np.array([[0, 0]]), np.array([[1, 1]]))
@@ -30,7 +30,8 @@ class MouseEventDemo(SimpleInterface):
         if self.point_list:
             self.draw_particles(
                 np.array(self.point_list).astype("f4"),
-                np.arange(len(self.point_list)).astype("i4"))
+                np.arange(len(self.point_list)).astype("i4"),
+            )
 
     def mouse_press_event(self, x, y, button):
         # fixed_x, fixed_y = self.map_wnd_to_gl(x, y)

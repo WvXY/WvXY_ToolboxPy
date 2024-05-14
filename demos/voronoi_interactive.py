@@ -3,13 +3,13 @@ import numpy as np
 import torch
 
 from test_cases import Cases
-from wXyEngine import TORCH_DEVICE
-from wXyEngine.Interface.interface import (
+from PyMRT import TORCH_DEVICE
+from PyMRT.Interface.interface import (
     SimpleInterfaceInteractive,
 )
-from wXyEngine.Renderer.mdgl_utils import Transform2d
-from wXyEngine.Utils.sampling import Boundary
-from wXyEngine.Utils.optimize_utils import (
+from PyMRT.Renderer.mdgl_utils import Transform2d
+from PyMRT.Utils.sampling import Boundary
+from PyMRT.Utils.optimize_utils import (
     set_points_to_groups,
     map_indices,
 )
@@ -17,7 +17,7 @@ from wXyEngine.Utils.optimize_utils import (
 MULTI_SITES = False
 DEVICE = TORCH_DEVICE
 use_case = 4
-p = 2**1
+p = 2 ** 1
 
 if p == 1:
     print("Using manhattan distance")
@@ -159,20 +159,16 @@ class Draw(SimpleInterfaceInteractive):
             weight=voronoi.sites[:, 2],
         )
         if MULTI_SITES:
-            self.sp_site_idx = map_indices(
-                self.sp_site_idx, voronoi.site_group_idx
-            )
+            self.sp_site_idx = map_indices(self.sp_site_idx, voronoi.site_group_idx)
 
     def mouse_press_event(self, x, y, button):
         global MULTI_SITES
         if button == 1:
             fixed_x, fixed_y = self.map_wnd_to_gl(x, y)
-            transformed_xy = self.tsfm.inv_mat3 @ np.array([
-                fixed_x, fixed_y, 1
-            ])
-            voronoi.diagram.add_node([
-                transformed_xy[0], transformed_xy[1], torch.rand(1) * 5
-            ])
+            transformed_xy = self.tsfm.inv_mat3 @ np.array([fixed_x, fixed_y, 1])
+            voronoi.diagram.add_node(
+                [transformed_xy[0], transformed_xy[1], torch.rand(1) * 5]
+            )
         if button == 2:
             MULTI_SITES = not MULTI_SITES
             print(f"MULTI_SITES: {MULTI_SITES}")
@@ -187,9 +183,7 @@ class Draw(SimpleInterfaceInteractive):
         )
 
         if MULTI_SITES:
-            self.sp_site_idx = map_indices(
-                self.sp_site_idx, voronoi.site_group_idx
-            )
+            self.sp_site_idx = map_indices(self.sp_site_idx, voronoi.site_group_idx)
 
     def lloyd_relaxation(self):
         voronoi.sites = Lloyd_relaxation(
@@ -217,17 +211,14 @@ class Draw(SimpleInterfaceInteractive):
             #     voronoi.diagram.nodes, voronoi.sites, voronoi.site_group_idx
             # )
 
-            self.sp_site_idx = map_indices(
-                self.sp_site_idx, voronoi.site_group_idx
-            )
+            self.sp_site_idx = map_indices(self.sp_site_idx, voronoi.site_group_idx)
         else:
             voronoi.diagram.nodes = voronoi.sites
 
     def render(self, time: float, frame_time: float, **kwargs):
         self.ctx.clear(0.8, 0.8, 0.8)
         self.ctx.enable(
-            moderngl.BLEND
-            | moderngl.PROGRAM_POINT_SIZE  # | moderngl.DEPTH_TEST
+            moderngl.BLEND | moderngl.PROGRAM_POINT_SIZE  # | moderngl.DEPTH_TEST
         )
 
         # ---optimize---
@@ -273,9 +264,7 @@ class Draw(SimpleInterfaceInteractive):
 
 
 if __name__ == "__main__":
-    vtx = Cases.boundary_vtx[use_case] - np.mean(
-        Cases.boundary_vtx[use_case], axis=0
-    )
+    vtx = Cases.boundary_vtx[use_case] - np.mean(Cases.boundary_vtx[use_case], axis=0)
     boundary = Boundary(vtx * 1.2 * 10)
     # --------------------------------------------------------------------------
     dgm = Diagram()

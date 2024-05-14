@@ -1,9 +1,9 @@
 from setuptools import find_packages, setup
 
 setup(
-    name="wXyEnginePy",
+    name="PyMRT",
     packages=find_packages(),
-    version="0.3.1",
-    description="My Python game engine library for personal research",
-    author="XY-Wu",
+    version="0.4.0",
+    description="A Python (game-engine-like) tool library originated from my master research",
+    author="WvXY",
 )

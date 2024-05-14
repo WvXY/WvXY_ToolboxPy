@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 # collision test
 class MyTestCase(unittest.TestCase):
     def test_AABB(self):
-        from wXyEngine.Physics.collision import AABB
-        from wXyEngine.Geometry import Circle, Rectangle, Line, LineBox, Particle
-        from wXyEngine.Geometry.GameObject import GameObjectManager
+        from PyMRT.Physics.collision import AABB
+        from PyMRT.Geometry import Circle, Rectangle, Line, LineBox, Particle
+        from PyMRT.Geometry.GameObject import GameObjectManager
 
         game_objs = GameObjectManager()
         game_objs.add(Circle(1, [0, 0]))
@@ -24,5 +24,5 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(AABB(game_objs.game_objects, 0, 1), True)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -3,8 +3,8 @@ from time import time
 import moderngl
 import numpy as np
 
-from wXyEngine.Renderer.mdgl_window import Window
-from wXyEngine.Physics.dynamics import MassSpringSystem
+from PyMRT.Renderer.mdgl_window import Window
+from PyMRT.Physics.dynamics import MassSpringSystem
 
 # TODO: integrate this with the Physics module
 
@@ -18,6 +18,7 @@ s = np.stack(s, dtype=np.float32)
 # c = c - c.mean(axis=0)     # centering
 adj = np.ones((n, n))  # graph of rooms
 adj = np.triu(adj, 1) + np.tril(adj, -1)
+
 
 # -----------------visualization------------------------
 
@@ -134,9 +135,7 @@ class GLVisualization(Window):
 
         # start draw
         self.vbo = self.ctx.buffer(vert.astype(np.float32))
-        self.vao = self.ctx.vertex_array(
-            self.prog, self.vbo, "vert", "vert_color"
-        )
+        self.vao = self.ctx.vertex_array(self.prog, self.vbo, "vert", "vert_color")
         self.vao.render(moderngl.TRIANGLES)
 
     def draw_connections(self):
@@ -152,17 +151,15 @@ class GLVisualization(Window):
 
         # print(vert.shape)
         self.vbo = self.ctx.buffer(np.array(vert, dtype="f4"))
-        self.vao = self.ctx.vertex_array(
-            self.prog, self.vbo, "vert", "vert_color"
-        )
+        self.vao = self.ctx.vertex_array(self.prog, self.vbo, "vert", "vert_color")
         self.vao.render(moderngl.LINES)
 
     def draw_circle(
-        self,
-        center: np.ndarray,
-        radius: np.float32,
-        n=64,
-        color=np.array([0.0, 0.0, 0.0]),
+            self,
+            center: np.ndarray,
+            radius: np.float32,
+            n=64,
+            color=np.array([0.0, 0.0, 0.0]),
     ):
         angle = np.linspace(0, 2 * np.pi, n)
         p = center + radius * np.array([np.cos(angle), np.sin(angle)]).T
@@ -170,9 +167,7 @@ class GLVisualization(Window):
         vert = np.hstack((p, np.tile(color, (n + 1, 1))))
 
         self.vbo = self.ctx.buffer(vert.astype(np.float32))
-        self.vao = self.ctx.vertex_array(
-            self.prog, self.vbo, "vert", "vert_color"
-        )
+        self.vao = self.ctx.vertex_array(self.prog, self.vbo, "vert", "vert_color")
         self.vao.render(moderngl.TRIANGLE_FAN)
 
     def draw_points(self, p: np.ndarray, size=0.1):

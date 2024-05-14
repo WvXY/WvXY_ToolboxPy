@@ -1,5 +1,5 @@
 from ballistic import Shot
-from wXyEngine.Geometry import Particle
+from pymrt.Geometry import Particle
 import numpy as np
 
 global GRAVITY

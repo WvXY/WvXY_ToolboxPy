@@ -1,5 +1,5 @@
-import wXyEngine as xe
-from wXyEngine.Geometry import Particle
+import pymrt as xe
+from pymrt.Geometry import Particle
 
 
 class Shot(xe.Geometry.SdParticle):

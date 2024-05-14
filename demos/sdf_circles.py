@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import torch
 
-from wXyEngine.Geometry.SdPrimitives import SdCircle
-from wXyEngine.Physics import Kinematics
-from wXyEngine.Utils import Grid as _Grid
-from wXyEngine.Utils.sdf_ops import sdUnion
+from PyMRT.Geometry.SdPrimitives import SdCircle
+from PyMRT.Physics import Kinematics
+from PyMRT.Utils import Grid as _Grid
+from PyMRT.Utils.sdf_ops import sdUnion
 
 
 class Grid(_Grid):

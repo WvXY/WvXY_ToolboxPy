@@ -1,7 +1,7 @@
 import moderngl
 
-import wXyEngine.Geometry as Geometry
-import wXyEngine.Interface.interface as Interface
+import PyMRT.Geometry as Geometry
+import PyMRT.Interface.interface as Interface
 
 
 class HelloWorld(Interface.SimpleInterfaceInteractive):
@@ -22,5 +22,3 @@ class HelloWorld(Interface.SimpleInterfaceInteractive):
 
 if __name__ == "__main__":
     HelloWorld.run()
-
-

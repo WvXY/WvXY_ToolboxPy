@@ -5,26 +5,26 @@ import random
 
 class MyTestCase(unittest.TestCase):
     def test_import(self):
-        import wXyEngine as xe
-        import wXyEngine.Geometry as Geometry
-        import wXyEngine.Renderer as Renderer
-        import wXyEngine.Physics as Physics
-        import wXyEngine.Utils as Utils
+        import PyMRT as xe
+        import PyMRT.Geometry as Geometry
+        import PyMRT.Renderer as Renderer
+        import PyMRT.Physics as Physics
+        import PyMRT.Utils as Utils
 
-        self.assertEqual(Geometry.__name__, "mrpyet.Geometry")
-        self.assertEqual(Renderer.__name__, "mrpyet.Renderer")
-        self.assertEqual(Physics.__name__, "mrpyet.Physics")
-        self.assertEqual(Utils.__name__, "mrpyet.Utils")
+        self.assertEqual(Geometry.__name__, "PyMRT.Geometry")
+        self.assertEqual(Renderer.__name__, "PyMRT.Renderer")
+        self.assertEqual(Physics.__name__, "PyMRT.Physics")
+        self.assertEqual(Utils.__name__, "PyMRT.Utils")
 
     def test_create_geometry(self):
-        import wXyEngine.Geometry as Geometry
+        import PyMRT.Geometry as Geometry
 
         P = Geometry.Primitives.Particle([0, 0])
         for c in P.pos:
             self.assertEqual(c, 0)
 
     def test_game_object_manager(self):
-        import wXyEngine.Geometry as Geometry
+        import PyMRT.Geometry as Geometry
 
         game_objects = Geometry.GameObjectManager()
         for i in range(10):
@@ -39,7 +39,7 @@ class MyTestCase(unittest.TestCase):
         del game_objects
 
     def test_game_object_manager_random(self):
-        import wXyEngine.Geometry as Geometry
+        import PyMRT.Geometry as Geometry
 
         game_objects = Geometry.GameObjectManager()
         # game_objects.reset_global_guid()
@@ -61,5 +61,5 @@ class MyTestCase(unittest.TestCase):
         del game_objects
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
