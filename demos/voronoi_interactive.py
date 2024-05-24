@@ -3,13 +3,13 @@ import numpy as np
 import torch
 
 from test_cases import Cases
-from PyMRT import TORCH_DEVICE
-from PyMRT.Interface.interface import (
+from pymrt import TORCH_DEVICE
+from pymrt.Interface.interface import (
     SimpleInterfaceInteractive,
 )
-from PyMRT.Renderer.mdgl_utils import Transform2d
-from PyMRT.Utils.sampling import Boundary
-from PyMRT.Utils.optimize_utils import (
+from pymrt.Renderer.mdgl_utils import Transform2d
+from pymrt.Utils.sampling import Boundary
+from pymrt.Utils.optimize_utils import (
     set_points_to_groups,
     map_indices,
 )
@@ -242,12 +242,14 @@ class Draw(SimpleInterfaceInteractive):
         self.draw_grid(scale=10, color=np.array([0.9, 0.9, 0.9]))
         self.draw_polygon(voronoi.boundary.vtx2xy, np.array([0, 0, 0]))
 
-        self.draw_particles(
-            self.sp.cpu(),
-            self.sp_site_idx.cpu(),
-            point_size=6,
-            # use_circle=False,
-        )
+        # self.draw_particles(
+        #     self.sp.cpu(),
+        #     self.sp_site_idx.cpu(),
+        #     point_size=6,
+        #     # use_circle=False,
+        # )
+        self.draw_voronoi(voronoi.sites[:, :2].cpu())
+
         self.draw_particles(
             voronoi.sites.cpu()[..., :2],
             point_size=16,

@@ -21,6 +21,7 @@ class Renderer2D(Window):
 
         self.prog = self.load_program("shaders/basic_shader.glsl")
         self.particle_prog = self.load_program("shaders/particle.glsl")
+        self.voronoi_prog = self.load_program("shaders/voronoi.glsl")
         self.grid = None
 
     def render(self, time: float, frame_time: float):
@@ -179,3 +180,16 @@ class Renderer2D(Window):
 
         self.draw_particles(
             vertices, np.ones(vertices.shape[0]), point_size=8)
+
+    def draw_voronoi(self, seeds):
+        seeds_uniform = np.empty([128, 2], dtype='f4')
+        seeds_uniform[:len(seeds)] = seeds
+        self.voronoi_prog['seeds'].write(seeds_uniform.tobytes())
+        self.voronoi_prog['nSeeds'].value = len(seeds)
+
+        view = np.array([-1, -1, -1, 1, 1, -1, 1, 1], dtype='f4')  # Cover the viewport
+        view_vbo = self.ctx.buffer(view.tobytes())
+        view_vao = self.ctx.simple_vertex_array(self.voronoi_prog, view_vbo, 'in_vert')
+        view_vao.render(moderngl.TRIANGLE_STRIP)
+        self.release_resources(view_vbo, view_vao)
+
