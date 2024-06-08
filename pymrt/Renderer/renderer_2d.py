@@ -4,6 +4,7 @@ import moderngl
 import numpy as np
 
 from .mdgl_window import Window
+from .voronoi_system import VoronoiPushData
 
 
 # some drawing functions
@@ -21,6 +22,7 @@ class Renderer2D(Window):
 
         self.prog = self.load_program("shaders/basic_shader.glsl")
         self.particle_prog = self.load_program("shaders/particle.glsl")
+        self.voronoi_prog = self.load_program("shaders/voronoi.glsl")
         self.grid = None
 
     def render(self, time: float, frame_time: float):
@@ -179,3 +181,25 @@ class Renderer2D(Window):
 
         self.draw_particles(
             vertices, np.ones(vertices.shape[0]), point_size=8)
+
+    def draw_voronoi(self, seeds):
+        # TODO: 1. separate voronoi renderer, 2. use push_constant for voronoi
+        voronoi_push = VoronoiPushData(seeds)
+        self.voronoi_prog['seeds'].write(voronoi_push.seeds.tobytes())
+        self.voronoi_prog['nSeeds'].write(voronoi_push.len.to_bytes(4, 'little'))
+
+        # self.voronoi_prog["Voronoi"].write(voronoi_push.tobytes())
+        # if not hasattr(self, 'voronoi_buffer'):
+        #     self.voronoi_buffer = self.ctx.buffer(voronoi_push.tobytes())
+        # else:
+        #     self.voronoi_buffer.write(voronoi_push.tobytes())
+
+        # Bind the buffer to the program's uniform block binding point
+        # binding_index = 0
+        # self.voronoi_buffer.bind_to_uniform_block(self.voronoi_prog['Voronoi'])
+
+        view = np.array([-1, -1, -1, 1, 1, -1, 1, 1], dtype='f4')  # Cover the viewport
+        view_vbo = self.ctx.buffer(view.tobytes())
+        view_vao = self.ctx.simple_vertex_array(self.voronoi_prog, view_vbo, 'in_vert')
+        view_vao.render(moderngl.TRIANGLE_STRIP)
+        self.release_resources(view_vbo, view_vao)

@@ -27,6 +27,7 @@ It is divided into several modules:
 python3 -m venv venv
 ./venv/Scripts/activate.bat
 pip install -r requirements.txt
+pip install -e .
 ```
 
 ##### PIP: Linux
@@ -35,6 +36,7 @@ pip install -r requirements.txt
 python3 -m venv venv
 bash ./venv/bin/activate
 pip install -r requirements.txt
+pip install -e .
 ```
 
 ##### Conda environment (recommended)
@@ -47,6 +49,7 @@ conda activate PyMRT-conda
 pip install del-msh imgui moderngl moderngl-window pygmsh
 conda install pytorch torchvision torchaudio pytorch-cuda>=12.1 -c pytorch -c nvidia
 conda install conda-forge::pygalmesh 
+pip install -e .
 ```
 
 #### (Optional)Add and init as submodule
@@ -61,9 +64,9 @@ git submodule update
 
 - [ ] Add a proper README.md
 - [ ] Rename class and submodule names to be more consistent
-- [ ] Use only PyTorch
+- [ ] Use only PyTorch & reduce dependencies
 - [ ] Entity Component System
-- [ ] Physics
+- [ ] Physics Engine
 
 ## Black Formatting
 
