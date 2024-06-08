@@ -124,16 +124,16 @@ def Lloyd_relaxation(
     sample_points = sample_points.clone().detach()
     sp_site_idx = sp_site_idx.clone().detach()
     for i, site in enumerate(sites):
-        site_new[i, :2] = torch.mean(sample_points[sp_site_idx == i], dim=0)
+        site_new[i, :2] = torch.mean(sample_points[sp_site_idx == i], dim=0) \
+            if len(sample_points[sp_site_idx == i]) > 0 else site[:2]
         site_new[i, 2] = site[2]
     return site_new
 
 
-# TODO: use shader to compute(sp2group, etc.) and draw voronoi diagram
 class Draw(SimpleInterfaceInteractive):
     gl_version = (4, 6)
     title = "Interactive Voronoi Demo"
-    vsync = True
+    vsync = False
     window_size = (800, 800)
     aspect_ratio = window_size[0] / window_size[1]
     resizable = True
@@ -149,8 +149,9 @@ class Draw(SimpleInterfaceInteractive):
         self.tsfm.scale(0.12, 0.12)
         self.prog["transform"].value = self.tsfm.mat3.flatten(order="F")
         self.particle_prog["transform"].value = self.tsfm.mat3.flatten("F")
+        self.voronoi_prog["transform"].write(self.tsfm.mat3.flatten("F").tobytes())
 
-        self.sp = boundary.sample_inside(n=100000, inplace=False, device=DEVICE)
+        self.sp = boundary.sample_inside(n=10000, inplace=False, device=DEVICE)
         self.sp_site_idx = set_points_to_groups(
             self.sp,
             voronoi.sites[:, :2],
