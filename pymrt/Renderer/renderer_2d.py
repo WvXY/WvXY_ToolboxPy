@@ -12,17 +12,17 @@ class Renderer2D(Window):
     """
     This is a 2D renderer based on ModernGL.
     Draw functions are implemented here.
-    It's only for my research prototyping currently.
     """
+
     title = "ModernGL 2D Renderer"
     resource_dir = Path(__file__).parent.resolve()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
         self.prog = self.load_program("shaders/basic_shader.glsl")
         self.particle_prog = self.load_program("shaders/particle.glsl")
         self.voronoi_prog = self.load_program("shaders/voronoi.glsl")
+
         self.grid = None
 
     def render(self, time: float, frame_time: float):
@@ -52,8 +52,9 @@ class Renderer2D(Window):
         if self.grid is None:  # TODO: fix this
             self.grid = self.make_grid(n) * scale
         if color is None:
-            color = np.tile(np.array([0.5, 0.5, 0.5]),
-                            (self.grid.shape[0] // 2, 1))
+            color = np.tile(
+                np.array([0.5, 0.5, 0.5]), (self.grid.shape[0] // 2, 1)
+            )
         grid_buffer = self.ctx.buffer(self.grid.astype("f4"))
         color_buffer = self.ctx.buffer(color.astype("f4"))
         vao_content = [
@@ -64,15 +65,16 @@ class Renderer2D(Window):
         vao.render(moderngl.LINES)
         self.release_resources(grid_buffer, color_buffer, vao)
 
-    def draw_particles(self, vertices: np.ndarray,
-                       indices=None, point_size=40, use_circle=True):
+    def draw_particles(
+        self, vertices: np.ndarray, indices=None, point_size=40, use_circle=True
+    ):
         self.particle_prog["point_size"].value = point_size
         self.particle_prog["use_circle"].value = use_circle
-        vertices_buffer = self.ctx.buffer(np.array(vertices, dtype='f4'))
+        vertices_buffer = self.ctx.buffer(np.array(vertices, dtype="f4"))
 
         has_indices = indices is not None
         if has_indices:
-            indices_buffer = self.ctx.buffer(np.array(indices, dtype='i4'))
+            indices_buffer = self.ctx.buffer(np.array(indices, dtype="i4"))
             vao_content = [
                 (vertices_buffer, "2f", 0),
                 (indices_buffer, "1i", 1),
@@ -91,7 +93,9 @@ class Renderer2D(Window):
         else:
             self.release_resources(vao, vertices_buffer)
 
-    def draw_rectangles(self, center: np.ndarray, shape: np.ndarray):  # TODO: optimize this
+    def draw_rectangles(
+        self, center: np.ndarray, shape: np.ndarray
+    ):  # TODO: optimize this
         vert = np.array([], dtype="f4")
         n = center.shape[0]
         np.random.seed(1)  # random color
@@ -111,8 +115,7 @@ class Renderer2D(Window):
 
         # start draw
         vbo = self.ctx.buffer(vert.astype("f4"))
-        vao = self.ctx.vertex_array(self.prog, vbo, "vert",
-                                    "vert_color")
+        vao = self.ctx.vertex_array(self.prog, vbo, "vert", "vert_color")
         vao.render(moderngl.TRIANGLES)
         self.release_resources(vao, vbo)
 
@@ -134,16 +137,22 @@ class Renderer2D(Window):
         self.vao.render(moderngl.LINE_LOOP)
         self.release_resources(self.vao, vert_buffer, color_buffer)
 
-    def draw_circle(self, center: np.ndarray, radius: float,
-                    n_div=12, color=np.array([0.0, 0.0, 0.0])):
+    def draw_circle(
+        self,
+        center: np.ndarray,
+        radius: float,
+        n_div=12,
+        color=np.array([0.0, 0.0, 0.0]),
+    ):
         angle = np.linspace(0, 2 * np.pi, n_div)
         p = center + radius * np.array([np.cos(angle), np.sin(angle)]).T
         p = np.insert(p, 0, center, axis=0)
         vert = np.hstack((p, np.tile(color, (n_div + 1, 1))))
 
         self.vbo = self.ctx.buffer(vert.astype("f4"))
-        self.vao = self.ctx.vertex_array(self.prog, self.vbo, "vert",
-                                         "vert_color")
+        self.vao = self.ctx.vertex_array(
+            self.prog, self.vbo, "vert", "vert_color"
+        )
         self.vao.render(moderngl.TRIANGLE_FAN)
 
     def draw_connections(self, p: np.ndarray, adj: np.ndarray):
@@ -163,8 +172,9 @@ class Renderer2D(Window):
 
         # print(vert.shape)
         self.vbo = self.ctx.buffer(vert.astype("f4"))
-        self.vao = self.ctx.vertex_array(self.prog, self.vbo, "vert",
-                                         "vert_color")
+        self.vao = self.ctx.vertex_array(
+            self.prog, self.vbo, "vert", "vert_color"
+        )
         self.vao.render(moderngl.LINES)
 
     def draw_graph(self, vertices, edges):  # TODO: optimize this
@@ -179,14 +189,15 @@ class Renderer2D(Window):
 
         self.release_resources(vao, vbo)
 
-        self.draw_particles(
-            vertices, np.ones(vertices.shape[0]), point_size=8)
+        self.draw_particles(vertices, np.ones(vertices.shape[0]), point_size=8)
 
-    def draw_voronoi(self, seeds):
+    def draw_voronoi(self, seeds, boundary=None):
         # TODO: 1. separate voronoi renderer, 2. use push_constant for voronoi
         voronoi_push = VoronoiPushData(seeds)
-        self.voronoi_prog['seeds'].write(voronoi_push.seeds.tobytes())
-        self.voronoi_prog['nSeeds'].write(voronoi_push.len.to_bytes(4, 'little'))
+        self.voronoi_prog["seeds"].write(voronoi_push.seeds.tobytes())
+        self.voronoi_prog["nSeeds"].write(
+            voronoi_push.len.to_bytes(4, "little")
+        )
 
         # self.voronoi_prog["Voronoi"].write(voronoi_push.tobytes())
         # if not hasattr(self, 'voronoi_buffer'):
@@ -198,8 +209,21 @@ class Renderer2D(Window):
         # binding_index = 0
         # self.voronoi_buffer.bind_to_uniform_block(self.voronoi_prog['Voronoi'])
 
-        view = np.array([-1, -1, -1, 1, 1, -1, 1, 1], dtype='f4')  # Cover the viewport
-        view_vbo = self.ctx.buffer(view.tobytes())
-        view_vao = self.ctx.simple_vertex_array(self.voronoi_prog, view_vbo, 'in_vert')
-        view_vao.render(moderngl.TRIANGLE_STRIP)
-        self.release_resources(view_vbo, view_vao)
+        if boundary is not None:
+            boundary = np.array(boundary, dtype="f4")
+            boundary_vbo = self.ctx.buffer(boundary.tobytes())
+            boundary_vao = self.ctx.vertex_array(
+                self.voronoi_prog, boundary_vbo, "in_vert"
+            )
+            boundary_vao.render(moderngl.TRIANGLE_FAN)
+            self.release_resources(boundary_vbo, boundary_vao)
+        else:
+            view = np.array(
+                [-1, -1, -1, 1, 1, -1, 1, 1], dtype="f4"
+            )  # Cover the viewport (not used)
+            view_vbo = self.ctx.buffer(view.tobytes())
+            view_vao = self.ctx.vertex_array(
+                self.voronoi_prog, view_vbo, "in_vert"
+            )
+            view_vao.render(moderngl.TRIANGLE_STRIP)
+            self.release_resources(view_vbo, view_vao)

@@ -1,20 +1,35 @@
 #version 460
 
-#define MAX_SEEDS 16
+#define MAX_SEEDS 128
 
 #if defined VERTEX_SHADER
 
 layout (location = 0) in vec2 in_vert;
 
+uniform mat3 transform = mat3(1.0);
+uniform bool fullScreen = false;
+
+vec2 fullScreenVerts[4] = vec2[](
+    vec2(-1.0, -1.0),
+    vec2(-1.0, 1.0),
+    vec2(1.0, -1.0),
+    vec2(1.0, 1.0)
+);
+
 void main() {
-    gl_Position = vec4(in_vert, 0.0, 1.0);
+    if (fullScreen) {
+        gl_Position = vec4(fullScreenVerts[gl_VertexID], 0.0, 1.0);
+        return;
+    }
+
+    gl_Position = vec4((transform * vec3(in_vert, 1.0)).xy, 0.0, 1.0);
 }
 
 #elif defined FRAGMENT_SHADER
 
 out vec4 f_color;
 
-uniform vec2 seeds[MAX_SEEDS];
+uniform vec2 seeds[MAX_SEEDS];  // TODO: use push constants & weights
 uniform int nSeeds;
 
 uniform mat3 transform = mat3(1.0);
