@@ -156,7 +156,7 @@ class Draw(SimpleInterfaceInteractive):
             self.tsfm.mat3.flatten("F").tobytes()
         )
 
-        self.sp = boundary.sample_inside(n=20000, inplace=False, device=DEVICE)
+        self.sp = boundary.sample_inside(n=10000, inplace=False, device=DEVICE)
         self.sp_site_idx = set_points_to_groups(
             self.sp,
             voronoi.sites[:, :2],
@@ -177,11 +177,11 @@ class Draw(SimpleInterfaceInteractive):
                 fixed_x, fixed_y, 1
             ])
             voronoi.diagram.add_node([
-                transformed_xy[0], transformed_xy[1], torch.rand(1) * 5
+                transformed_xy[0], transformed_xy[1], torch.rand(1) + 1
             ])
-        if button == 2:
-            MULTI_SITES = not MULTI_SITES
-            print(f"MULTI_SITES: {MULTI_SITES}")
+        # if button == 2:
+        #     MULTI_SITES = not MULTI_SITES
+        #     print(f"MULTI_SITES: {MULTI_SITES}")
 
         voronoi.refresh_groups()
         self.sp_site_idx = set_points_to_groups(
@@ -237,40 +237,49 @@ class Draw(SimpleInterfaceInteractive):
         )
 
         # ---optimize---
-        if self.wnd.is_key_pressed(122):  # z
-            print("==Lloyd Relaxation==")
-            self.lloyd_relaxation()
-
-        for i in range(voronoi.sites.shape[0]):
-            voronoi.sites[i, 2] = torch.sin(torch.tensor(time + i * 3)) * 4
-        voronoi.refresh_groups()
-        self.sp_site_idx = set_points_to_groups(
-            self.sp,
-            voronoi.sites[:, :2],
-            p=p,
-            device=DEVICE,
-            # weight=voronoi.sites[:, 2],
-        )
-        self.lloyd_relaxation()
+        # if self.wnd.is_key_pressed(122):  # z
+        #     print("==Lloyd Relaxation==")
+        #     self.lloyd_relaxation()
+        #
+        # for i in range(voronoi.sites.shape[0]):
+        #     voronoi.sites[i, 2] = torch.sin(torch.tensor(time + i * 3)) * 4
+        # voronoi.refresh_groups()
+        # self.sp_site_idx = set_points_to_groups(
+        #     self.sp,
+        #     voronoi.sites[:, :2],
+        #     p=p,
+        #     device=DEVICE,
+        #     # weight=voronoi.sites[:, 2],
+        # )
+        # self.lloyd_relaxation()
 
         # ---draw---
         self.draw_grid(scale=10, color=np.array([0.9, 0.9, 0.9]))
 
-        self.draw_voronoi(voronoi.sites[:, :2].cpu(), voronoi.boundary.vtx2xy)
+        # for site in voronoi.sites.cpu():
+        #     site[2] = 1 + torch.sin(torch.tensor(site[2] + time))
+        voronoi.sites[0, 2] = torch.sin(torch.tensor(time)) + 1
 
-        self.draw_particles(
-            voronoi.sites.cpu()[..., :2],
-            point_size=16,
-            # use_circle=False,
-        )
+        self.draw_voronoi(voronoi.sites[:, :3].cpu(), voronoi.boundary.vtx2xy)
 
-        if MULTI_SITES:
+        # self.draw_particles(
+        #     voronoi.sites.cpu()[..., :2],
+        #     point_size=voronoi.sites.cpu()[:, 2] * 100,
+        #     # use_circle=False,
+        # )
+        for site in voronoi.sites.cpu():
             self.draw_particles(
-                voronoi.sites.cpu(),
-                voronoi.site_group_idx.cpu(),
-                point_size=12,
-                use_circle=False,
+                [site[:2]],
+                point_size=site[2] * 20,
             )
+
+        # if MULTI_SITES:
+        #     self.draw_particles(
+        #         voronoi.sites.cpu(),
+        #         voronoi.site_group_idx.cpu(),
+        #         point_size=12,
+        #         use_circle=False,
+        #     )
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@ class VoronoiPushData:
     __MAX_SEEDS = 128
 
     def __init__(self, seeds=None):
-        self.seeds = np.empty([self.__MAX_SEEDS, 2], dtype="f4")
+        self.seeds = np.empty([self.__MAX_SEEDS, 3], dtype="f4")
         if seeds is not None:
             self.len = len(seeds)
             self.seeds[: self.len] = seeds

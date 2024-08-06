@@ -29,7 +29,7 @@ void main() {
 
 out vec4 f_color;
 
-uniform vec2 seeds[MAX_SEEDS];  // TODO: use push constants & weights
+uniform vec3 seeds[MAX_SEEDS];  // TODO: use push constants & weights
 uniform int nSeeds;
 
 uniform mat3 transform = mat3(1.0);
@@ -55,8 +55,8 @@ void main() {
     int closest_seed = 0;
 
     for (int i = 0; i < nSeeds; ++i) {
-        vec3 iseed = transform * vec3(seeds[i], 1.0);
-        float dist = distance(ipos, iseed.xy);
+        vec3 iseed = transform * vec3(seeds[i].xy, 1.0);
+        float dist = distance(ipos, iseed.xy) - seeds[i].z;
         if (dist < min_dist) {
             min_dist = dist;
             closest_seed = i;
