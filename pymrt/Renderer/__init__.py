@@ -1,17 +1,6 @@
-from . import (
-    mdgl_window,
-    mdgl_utils,
-    renderer_2d,
-    renderer_3d,
-    Texture
-)
+from . import mdgl_window, mdgl_utils, renderer_2d, renderer_3d
 
-__all__ = [
-    "mdgl_window",
-    "mdgl_utils",
-    "renderer_2d",
-    "renderer_3d"
-]
+__all__ = ["mdgl_window", "mdgl_utils", "renderer_2d", "renderer_3d"]
 
 
 def __getattr__(name):
