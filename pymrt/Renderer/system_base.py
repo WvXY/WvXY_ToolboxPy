@@ -16,10 +16,18 @@ class SystemBase(Window):
     @staticmethod
     def _release(*args):
         for arg in args:
+            if arg is None:
+                continue
             arg.release()
 
     def set_uniform(self, name: str, value: bytes):
         self._program[name].write(value)
+
+    def create_buffer(self):
+        pass
+
+    def setup(self):
+        pass
 
     def draw(self):
         pass
