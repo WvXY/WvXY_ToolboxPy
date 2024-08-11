@@ -4,14 +4,13 @@ import numpy as np
 from .system_base import SystemBase
 
 
+# TODO: refactor the draw functions
 class BasicSystem(SystemBase):
     def __init__(self, ctx):
         super().__init__(ctx, "./shaders/basic_shader.glsl")
-        # self._program = self.load_program("./shaders/basic_shader.glsl")
         self.vao, self.vbo, self.ebo = None, None, None
 
     def draw(self):
-        # draw mesh format
         pass
 
     def draw_grid(self, grid, color=None):

@@ -1,13 +1,7 @@
-import moderngl
-
-from pathlib import Path
 from .mdgl_window import Window
-import moderngl_window
 
 
 class SystemBase(Window):
-    resource_dir = Path(__file__).parent.resolve()
-
     def __init__(self, ctx, prog_src):
         self.ctx = ctx
         self._program = self.load_program(prog_src)  # if prog_src else None
