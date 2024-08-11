@@ -25,18 +25,18 @@ class VoronoiPushData:
 
 
 class VoronoiSystem(SystemBase):
-    def __init__(self, ctx=None):
-        super().__init__(ctx)
+    def __init__(self, ctx):
+        super().__init__(ctx, "./shaders/voronoi.glsl")
         self.seeds = np.empty((0, 3))  # [x, y, w]
         self.push_data = VoronoiPushData()
-        self.__program = self.load_program("./shaders/voronoi.glsl")
+        # self._program = self.load_program("./shaders/voronoi.glsl")
 
     def set_seeds(self, seeds):
         self.seeds = seeds
         self.push_data.update(seeds)
 
-    def set_uniform(self, name, value):
-        self.__program[name].write(value.tobytes())
+    # def set_uniform(self, name, value):
+    #     self._program[name].write(value.tobytes())
 
     def draw(self, seeds=None, boundary=None):
         if seeds is not None:
@@ -44,24 +44,22 @@ class VoronoiSystem(SystemBase):
         if self.seeds is None:
             raise ValueError("Seeds are None")
 
-        self.__program["seeds"].write(self.push_data.seeds.tobytes())
-        self.__program["nSeeds"].write(self.push_data.len.to_bytes(4, "little"))
+        self.set_uniform("seeds", self.push_data.seeds.tobytes())
+        self.set_uniform("nSeeds", self.push_data.len.to_bytes(4, "little"))
 
         if boundary is not None:
             boundary = np.array(boundary, dtype="f4")
             boundary_vbo = self.ctx.buffer(boundary.tobytes())
             boundary_vao = self.ctx.vertex_array(
-                self.__program, boundary_vbo, "in_vert"
+                self._program, boundary_vbo, "in_vert"
             )
             boundary_vao.render(moderngl.TRIANGLE_FAN)
-            self.release_resources(boundary_vbo, boundary_vao)
+            self._release(boundary_vbo, boundary_vao)
         else:
             view = np.array(
                 [-1, -1, -1, 1, 1, -1, 1, 1], dtype="f4"
             )  # Cover the viewport (not used)
             view_vbo = self.ctx.buffer(view.tobytes())
-            view_vao = self.ctx.vertex_array(
-                self.__program, view_vbo, "in_vert"
-            )
+            view_vao = self.ctx.vertex_array(self._program, view_vbo, "in_vert")
             view_vao.render(moderngl.TRIANGLE_STRIP)
-            self.release_resources(view_vbo, view_vao)
+            self._release(view_vbo, view_vao)
