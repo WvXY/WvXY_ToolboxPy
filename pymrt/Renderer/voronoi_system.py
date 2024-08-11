@@ -8,7 +8,7 @@ class VoronoiPushData:
     __MAX_SEEDS = 128
 
     def __init__(self, seeds=None):
-        self.seeds = np.empty([self.__MAX_SEEDS, 3], dtype="f4")
+        self.seeds = np.empty([self.__MAX_SEEDS, 3], dtype="f4")  # [x, y, w]
         if seeds is not None:
             self.len = len(seeds)
             self.seeds[: self.len] = seeds
@@ -27,39 +27,38 @@ class VoronoiPushData:
 class VoronoiSystem(SystemBase):
     def __init__(self, ctx):
         super().__init__(ctx, "./shaders/voronoi.glsl")
-        self.seeds = np.empty((0, 3))  # [x, y, w]
         self.push_data = VoronoiPushData()
-        # self._program = self.load_program("./shaders/voronoi.glsl")
+        self.boundary = None
+        self.vao, self.vbo = None, None
 
     def set_seeds(self, seeds):
-        self.seeds = seeds
         self.push_data.update(seeds)
 
-    # def set_uniform(self, name, value):
-    #     self._program[name].write(value.tobytes())
+    def create_buffer(self, seeds, boundary=None):
+        if boundary is None:
+            self.set_uniform("fullCanvas", True.to_bytes(4, "little"))
+            self.boundary = np.array(
+                [
+                    [0, 0],
+                    [0, 1],
+                    [1, 1],
+                    [1, 0],
+                ],
+                dtype="f4",
+            )
+        else:
+            self.boundary = boundary
 
-    def draw(self, seeds=None, boundary=None):
-        if seeds is not None:
-            self.set_seeds(seeds)
-        if self.seeds is None:
-            raise ValueError("Seeds are None")
+        self.set_seeds(seeds)
+        self.vbo = self.ctx.buffer(self.boundary.tobytes())
 
+    def setup(self):
         self.set_uniform("seeds", self.push_data.seeds.tobytes())
         self.set_uniform("nSeeds", self.push_data.len.to_bytes(4, "little"))
+        self.vao = self.ctx.vertex_array(self._program, self.vbo, 0)
 
-        if boundary is not None:
-            boundary = np.array(boundary, dtype="f4")
-            boundary_vbo = self.ctx.buffer(boundary.tobytes())
-            boundary_vao = self.ctx.vertex_array(
-                self._program, boundary_vbo, "in_vert"
-            )
-            boundary_vao.render(moderngl.TRIANGLE_FAN)
-            self._release(boundary_vbo, boundary_vao)
-        else:
-            view = np.array(
-                [-1, -1, -1, 1, 1, -1, 1, 1], dtype="f4"
-            )  # Cover the viewport (not used)
-            view_vbo = self.ctx.buffer(view.tobytes())
-            view_vao = self.ctx.vertex_array(self._program, view_vbo, "in_vert")
-            view_vao.render(moderngl.TRIANGLE_STRIP)
-            self._release(view_vbo, view_vao)
+    def draw(self):
+        self.setup()
+        self.vao.render(moderngl.TRIANGLE_FAN)
+        self._release(self.vao, self.vbo)
+        self.boundary = None

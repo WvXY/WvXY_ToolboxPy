@@ -15,7 +15,7 @@ class SystemBase(Window):
     def set_uniform(self, name: str, value: bytes):
         self._program[name].write(value)
 
-    def create_buffer(self):
+    def create_buffer(self, **kwargs):
         pass
 
     def setup(self):

@@ -15,8 +15,6 @@ class BasicSystem(SystemBase):
         pass
 
     def draw_grid(self, grid, color=None):
-        # if self.grid is None:
-        #     self.grid = self.make_grid(n) * scale
         if color is None:
             color = np.tile(np.array([0.5, 0.5, 0.5]), (grid.shape[0] // 2, 1))
         grid_buffer = self.ctx.buffer(grid.astype("f4"))

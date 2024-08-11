@@ -269,9 +269,7 @@ class Draw(SimpleInterfaceInteractive):
         #     site[2] = 1 + torch.sin(torch.tensor(site[2] + time))
         voronoi.sites[0, 2] = torch.sin(torch.tensor(time)) + 1
 
-        self.voronoi_system.draw(
-            voronoi.sites[:, :3].cpu(), voronoi.boundary.vtx2xy
-        )
+        self.voronoi_system.create_buffer(voronoi.sites[:, :3].cpu())
 
         # self.draw_particles(
         #     voronoi.sites.cpu()[..., :2],
@@ -284,7 +282,7 @@ class Draw(SimpleInterfaceInteractive):
                 point_size=site[2] * 10,
             )
 
-        self.particle_system.draw()
+        self.draw()
 
         # if MULTI_SITES:
         #     self.draw_particles(
