@@ -21,11 +21,13 @@ class Transform2d:  # order matters
 
     def rotate(self, theta):
         self.transform = (
-            np.array([
-                [np.cos(theta), -np.sin(theta), 0],
-                [np.sin(theta), np.cos(theta), 0],
-                [0, 0, 1],
-            ])
+            np.array(
+                [
+                    [np.cos(theta), -np.sin(theta), 0],
+                    [np.sin(theta), np.cos(theta), 0],
+                    [0, 0, 1],
+                ]
+            )
             @ self.transform
         )
 
@@ -35,5 +37,11 @@ class Transform2d:  # order matters
         )
 
 
-class Transform3d:
-    pass
+def generate_grids(n=10):
+    grid = np.array([], dtype="f4")
+    for i in range(n * 2 + 1):
+        grid = np.append(grid, [i - n, -n])
+        grid = np.append(grid, [i - n, n])
+        grid = np.append(grid, [-n, i - n])
+        grid = np.append(grid, [n, i - n])
+    return (grid / n).astype("f4")
