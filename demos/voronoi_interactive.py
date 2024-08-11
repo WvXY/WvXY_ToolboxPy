@@ -5,9 +5,9 @@ import torch
 from test_cases import Cases
 from pymrt import TORCH_DEVICE
 from pymrt.Interface.interface import (
-    SimpleInterfaceInteractive,
+    SimpleAppInteractive,
 )
-from pymrt.Renderer.mdgl_utils import Transform2d
+from pymrt.Renderer.utils import Transform2d, generate_grids
 from pymrt.Utils.sampling import Boundary
 from pymrt.Utils.optimize_utils import (
     set_points_to_groups,
@@ -133,7 +133,7 @@ def Lloyd_relaxation(
     return site_new
 
 
-class Draw(SimpleInterfaceInteractive):
+class Draw(SimpleAppInteractive):
     gl_version = (4, 6)
     title = "Interactive Voronoi Demo"
     vsync = False
@@ -259,7 +259,7 @@ class Draw(SimpleInterfaceInteractive):
 
         # ---draw---
         self.grid = (
-            self.make_grid(n=10) * 10 if self.grid is None else self.grid
+            generate_grids(n=10) * 10 if self.grid is None else self.grid
         )
         self.basic_system.draw_grid(
             grid=self.grid, color=np.array([0.9, 0.9, 0.9])
@@ -269,7 +269,9 @@ class Draw(SimpleInterfaceInteractive):
         #     site[2] = 1 + torch.sin(torch.tensor(site[2] + time))
         voronoi.sites[0, 2] = torch.sin(torch.tensor(time)) + 1
 
-        self.voronoi_system.create_buffer(voronoi.sites[:, :3].cpu())
+        self.voronoi_system.create_buffer(
+            voronoi.sites[:, :3].cpu(), voronoi.boundary.vtx2xy
+        )
 
         # self.draw_particles(
         #     voronoi.sites.cpu()[..., :2],

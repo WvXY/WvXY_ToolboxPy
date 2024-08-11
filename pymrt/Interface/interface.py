@@ -1,49 +1,39 @@
-from ..Renderer.renderer_2d import Renderer2D
+from ..Renderer.renderer import Renderer
 
 import moderngl
-import numpy as np
 import imgui
-from moderngl_window.context.base import KeyModifiers
 from moderngl_window.integrations.imgui import ModernglWindowRenderer
 
 
-class SimpleInterface(Renderer2D):
+class SimpleApp(Renderer):
     """
-    A simple interface as demo
+    A simple Application demo
     Just showing but not interactive
     """
-    title = "Simple Interface Template"
+
+    title = "Simple App Base"
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+    def map_wnd_to_gl(self, x, y):
+        return x / self.wnd.width * 2 - 1, 1 - y / self.wnd.height * 2
+
     def render(self, time, frame_time):
         self.ctx.clear(1.0, 1.0, 1.0)
         self.ctx.enable(moderngl.BLEND | moderngl.PROGRAM_POINT_SIZE)
-        self.draw_grid()
-        p = np.random.rand(10, 2) * 2 - 1
-        self.draw_particles(p, np.arange(10))
 
 
-class SimpleInterfaceInteractive(Renderer2D):
+class SimpleAppInteractive(SimpleApp):
     """
     A simple interface as demo
     Can take input from mouse and keyboard
     """
-    title = "Simple Interface Template with Interaction"
+
+    title = "Simple Application with Interaction"
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-    def render(self, time, frame_time):
-        self.ctx.clear(1.0, 1.0, 1.0)
-        self.ctx.enable(moderngl.BLEND | moderngl.PROGRAM_POINT_SIZE)
-        self.draw_grid()
-        p = np.random.rand(10, 2) * 2 - 1
-        self.draw_particles(p, np.arange(10))
-
-    def map_wnd_to_gl(self, x, y):
-        return x / self.wnd.width * 2 - 1, 1 - y / self.wnd.height * 2
 
     def mouse_press_event(self, x, y, button):
         fixed_x, fixed_y = self.map_wnd_to_gl(x, y)
@@ -58,20 +48,20 @@ class SimpleInterfaceInteractive(Renderer2D):
         # print(f"mouse drag to {fixed_x}, {fixed_y}")
 
 
-# TODO: make the structure more clear
-class SimpleInterfaceWithImgui(Renderer2D):
+class SimpleAppWithImgui(SimpleApp):
     """
     A simple interface template using imgui
     Don't forget to override the render_ui function
     and call self.render_ui() in render function
     """
-    title = "Simple Interface Template with Imgui"
+
+    title = "Simple Application with Imgui"
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
         imgui.create_context()
-        self.wnd.ctx.error
+        self.wnd.ctx.error()
         self.imgui = ModernglWindowRenderer(self.wnd)
 
     def render_ui(self):

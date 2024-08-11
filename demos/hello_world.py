@@ -1,10 +1,10 @@
 import moderngl
 
-import PyMRT.Geometry as Geometry
-import PyMRT.Interface.interface as Interface
+import pymrt.Geometry as Geometry
+import pymrt.Interface.interface as Interface
 
 
-class HelloWorld(Interface.SimpleInterfaceInteractive):
+class HelloWorld(Interface.SimpleAppInteractive):
     title = "Hello World"
     vsync = True
     window_size = (800, 600)

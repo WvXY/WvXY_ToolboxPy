@@ -1,15 +1,15 @@
 from . import interface, kbd_controller
 
 from .interface import (
-    SimpleInterface,
-    SimpleInterfaceInteractive,
-    SimpleInterfaceWithImgui,
+    SimpleApp,
+    SimpleAppInteractive,
+    SimpleAppWithImgui,
 )
 
 __all__ = [
     "interface",
     "kbd_controller",
-    "SimpleInterface",
-    "SimpleInterfaceInteractive",
-    "SimpleInterfaceWithImgui",
+    "SimpleApp",
+    "SimpleAppInteractive",
+    "SimpleAppWithImgui",
 ]

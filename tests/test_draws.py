@@ -1,12 +1,12 @@
 import unittest
-from pymrt.Interface import SimpleInterface
+from pymrt.Interface import SimpleApp
 import moderngl
 import numpy as np
 
 
 class MyTestCase(unittest.TestCase):
     def test_draw_image(self):
-        class ImageDrawTest(SimpleInterface):
+        class ImageDrawTest(SimpleApp):
             vsync = True
             samples = 8
 
@@ -26,7 +26,7 @@ class MyTestCase(unittest.TestCase):
         ImageDrawTest.run()
 
     def test_draw_voronoi(self):
-        class Voronoi(SimpleInterface):
+        class Voronoi(SimpleApp):
             vsync = True
 
             def render(self, time, frame_time):
