@@ -3,26 +3,26 @@
 #if defined VERTEX_SHADER
 
 layout(location = 0) in vec2 vert;
-layout(location = 1) in vec3 vert_color;
+layout(location = 1) in vec3 color;
 
-uniform mat3 transform = mat3(1.0);
+uniform mat3 transform3 = mat3(1.0);
 
-out vec3 frag_color;
+out vec3 fragColor;
 
 void main() {
-    frag_color = vert_color;
-    vec3 position = vec3(transform * vec3(vert, 1.0));
-    gl_Position = vec4(position.xy, 0.0, 1.0);
+    fragColor = color;
+    vec3 fixedPos = vec3(transform3 * vec3(vert, 1.0));
+    gl_Position = vec4(fixedPos.xy, 0.0, 1.0);
 }
 
 #elif defined FRAGMENT_SHADER
 
-in vec3 frag_color;
+in vec3 fragColor;
 
-out vec4 out_color;
+out vec4 outColor;
 
 void main() {
-    out_color = vec4(frag_color, 1.0);
+    outColor = vec4(fragColor, 1.0);
 }
 
 #endif
