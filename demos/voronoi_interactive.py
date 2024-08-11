@@ -153,11 +153,11 @@ class Draw(SimpleInterfaceInteractive):
         self.tsfm.scale(0.12, 0.12)
 
         self.particle_system.set_uniform(
-            "transform", self.tsfm.mat3.flatten("F")
+            "transform3", self.tsfm.mat3.flatten("F")
         )
-        self.basic_system.set_uniform("transform", self.tsfm.mat3.flatten("F"))
+        self.basic_system.set_uniform("transform3", self.tsfm.mat3.flatten("F"))
         self.voronoi_system.set_uniform(
-            "transform", self.tsfm.mat3.flatten("F")
+            "transform3", self.tsfm.mat3.flatten("F")
         )
 
         self.sp = boundary.sample_inside(n=10000, inplace=False, device=DEVICE)
@@ -279,10 +279,12 @@ class Draw(SimpleInterfaceInteractive):
         #     # use_circle=False,
         # )
         for site in voronoi.sites.cpu():
-            self.particle_system.draw(
+            self.particle_system.create_buffer(
                 [site[:2]],
-                point_size=site[2] * 20,
+                point_size=site[2] * 10,
             )
+
+        self.particle_system.draw()
 
         # if MULTI_SITES:
         #     self.draw_particles(
