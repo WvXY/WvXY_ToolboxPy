@@ -147,15 +147,18 @@ class Draw(SimpleInterfaceInteractive):
 
         global voronoi
         self.voronoi = voronoi
+        self.grid = None
 
         self.tsfm = Transform2d()
         self.tsfm.scale(0.12, 0.12)
-        self.prog["transform"].value = self.tsfm.mat3.flatten(order="F")
-        self.particle_prog["transform"].value = self.tsfm.mat3.flatten("F")
-        # self.voronoi_prog["transform"].write(
-        #     self.tsfm.mat3.flatten("F").tobytes()
-        # )
-        self.voronoi_system.set_uniform("transform", self.tsfm.mat3.flatten("F"))
+
+        self.particle_system.set_uniform(
+            "transform", self.tsfm.mat3.flatten("F")
+        )
+        self.basic_system.set_uniform("transform", self.tsfm.mat3.flatten("F"))
+        self.voronoi_system.set_uniform(
+            "transform", self.tsfm.mat3.flatten("F")
+        )
 
         self.sp = boundary.sample_inside(n=10000, inplace=False, device=DEVICE)
         self.sp_site_idx = set_points_to_groups(
@@ -174,12 +177,12 @@ class Draw(SimpleInterfaceInteractive):
         global MULTI_SITES
         if button == 1:
             fixed_x, fixed_y = self.map_wnd_to_gl(x, y)
-            transformed_xy = self.tsfm.inv_mat3 @ np.array([
-                fixed_x, fixed_y, 1
-            ])
-            voronoi.diagram.add_node([
-                transformed_xy[0], transformed_xy[1], torch.rand(1) + 1
-            ])
+            transformed_xy = self.tsfm.inv_mat3 @ np.array(
+                [fixed_x, fixed_y, 1]
+            )
+            voronoi.diagram.add_node(
+                [transformed_xy[0], transformed_xy[1], torch.rand(1) + 1]
+            )
         # if button == 2:
         #     MULTI_SITES = not MULTI_SITES
         #     print(f"MULTI_SITES: {MULTI_SITES}")
@@ -255,13 +258,20 @@ class Draw(SimpleInterfaceInteractive):
         # self.lloyd_relaxation()
 
         # ---draw---
-        self.draw_grid(scale=10, color=np.array([0.9, 0.9, 0.9]))
+        self.grid = (
+            self.make_grid(n=10) * 10 if self.grid is None else self.grid
+        )
+        self.basic_system.draw_grid(
+            grid=self.grid, color=np.array([0.9, 0.9, 0.9])
+        )
 
         # for site in voronoi.sites.cpu():
         #     site[2] = 1 + torch.sin(torch.tensor(site[2] + time))
         voronoi.sites[0, 2] = torch.sin(torch.tensor(time)) + 1
 
-        self.voronoi_system.draw(voronoi.sites[:, :3].cpu(), voronoi.boundary.vtx2xy)
+        self.voronoi_system.draw(
+            voronoi.sites[:, :3].cpu(), voronoi.boundary.vtx2xy
+        )
 
         # self.draw_particles(
         #     voronoi.sites.cpu()[..., :2],
@@ -269,7 +279,7 @@ class Draw(SimpleInterfaceInteractive):
         #     # use_circle=False,
         # )
         for site in voronoi.sites.cpu():
-            self.draw_particles(
+            self.particle_system.draw(
                 [site[:2]],
                 point_size=site[2] * 20,
             )
