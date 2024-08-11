@@ -12,11 +12,7 @@ class ParticleSystem(SystemBase):
         self.rect_mode = False
 
         self.particles = []
-        self.vao, self.vbo, self.ebo = None, None, None
-
-    # def set_point_size(self, size):
-    #     self.point_size = size
-    #     self.set_uniform("point_size", self.point_size.to_bytes(4, "little"))
+        self.vao, self.vbo = None, None
 
     def set_to_rect_mode(self, rect_mode):
         self.rect_mode = rect_mode
@@ -25,9 +21,10 @@ class ParticleSystem(SystemBase):
     def create_buffer(
         self,
         pos: list | np.ndarray | torch.Tensor = None,
-        color=[0.0, 0.0, 0.0],
+        color=None,
         point_size: float = 6,
     ):
+        color = [0.0, 0.0, 0.0] if color is None else color
         for i in range(len(pos)):
             self.particles.append((*pos[i], *color, point_size))
 
@@ -36,7 +33,6 @@ class ParticleSystem(SystemBase):
         self.vbo = self.ctx.buffer(np.array(self.particles, dtype="f4"))
 
         vao_content = [(self.vbo, "2f 3f 1f", 0, 1, 2)]
-
         self.vao = self.ctx.vertex_array(self._program, vao_content)
 
     def draw(self):
@@ -44,4 +40,4 @@ class ParticleSystem(SystemBase):
         self.vao.render(moderngl.POINTS)
         # clean up
         self.particles.clear()
-        self._release(self.vao, self.vbo, self.ebo)
+        self._release(self.vao, self.vbo)
