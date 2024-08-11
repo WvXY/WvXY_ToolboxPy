@@ -9,16 +9,8 @@ class SystemBase(Window):
     resource_dir = Path(__file__).parent.resolve()
 
     def __init__(self, ctx, prog_src):
-        # super().__init__(**kwargs)
         self.ctx = ctx
         self._program = self.load_program(prog_src)  # if prog_src else None
-
-    @staticmethod
-    def _release(*args):
-        for arg in args:
-            if arg is None:
-                continue
-            arg.release()
 
     def set_uniform(self, name: str, value: bytes):
         self._program[name].write(value)
@@ -31,3 +23,10 @@ class SystemBase(Window):
 
     def draw(self):
         pass
+
+    @staticmethod
+    def _release(*args):
+        for arg in args:
+            if arg is None:
+                continue
+            arg.release()
