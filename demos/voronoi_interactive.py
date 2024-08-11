@@ -152,9 +152,10 @@ class Draw(SimpleInterfaceInteractive):
         self.tsfm.scale(0.12, 0.12)
         self.prog["transform"].value = self.tsfm.mat3.flatten(order="F")
         self.particle_prog["transform"].value = self.tsfm.mat3.flatten("F")
-        self.voronoi_prog["transform"].write(
-            self.tsfm.mat3.flatten("F").tobytes()
-        )
+        # self.voronoi_prog["transform"].write(
+        #     self.tsfm.mat3.flatten("F").tobytes()
+        # )
+        self.voronoi_system.set_uniform("transform", self.tsfm.mat3.flatten("F"))
 
         self.sp = boundary.sample_inside(n=10000, inplace=False, device=DEVICE)
         self.sp_site_idx = set_points_to_groups(
@@ -260,7 +261,7 @@ class Draw(SimpleInterfaceInteractive):
         #     site[2] = 1 + torch.sin(torch.tensor(site[2] + time))
         voronoi.sites[0, 2] = torch.sin(torch.tensor(time)) + 1
 
-        self.draw_voronoi(voronoi.sites[:, :3].cpu(), voronoi.boundary.vtx2xy)
+        self.voronoi_system.draw(voronoi.sites[:, :3].cpu(), voronoi.boundary.vtx2xy)
 
         # self.draw_particles(
         #     voronoi.sites.cpu()[..., :2],
