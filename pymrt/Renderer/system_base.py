@@ -12,10 +12,10 @@ class SystemBase(Window):
     def create_buffer(self, **kwargs):
         pass
 
-    def setup(self):
+    def setup(self, **kwargs):
         pass
 
-    def draw(self):
+    def draw(self, **kwargs):
         pass
 
     @staticmethod
