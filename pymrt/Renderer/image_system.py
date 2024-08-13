@@ -31,12 +31,11 @@ class ImageSystem(SystemBase):
         self.texture = self.ctx.texture(
             (width, height), 3, image_data.astype(np.uint8).tobytes()
         )
-
         self.vbo = self.ctx.buffer(self.vert_and_coord)
-        self.vao = self.ctx.vertex_array(self._program, [(self.vbo, "4f", 0)])
-        self.texture.build_mipmaps()
 
     def setup(self):
+        self.vao = self.ctx.vertex_array(self._program, [(self.vbo, "4f", 0)])
+        self.texture.build_mipmaps()
         self.texture.use()
 
     def draw(self):

@@ -4,8 +4,9 @@ import moderngl
 
 from pymrt.Interface.interface import SimpleApp
 
-WIDTH, HEIGHT = 100, 100
 from pymrt import TORCH_DEVICE
+
+WIDTH, HEIGHT = 100, 100
 
 
 def generate_noise(width, height):
@@ -27,8 +28,8 @@ def normalize(noise):
 
 
 class NoiseApp(SimpleApp):
-    window_size = (WIDTH * 3, HEIGHT * 3)
-    aspect_ratio = 1
+    window_size = [WIDTH * 6, HEIGHT * 6]
+    aspect_ratio = WIDTH / HEIGHT
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -39,7 +40,12 @@ class NoiseApp(SimpleApp):
         self.ctx.enable(moderngl.BLEND)  # | moderngl.DEPTH_TEST
 
         median_filter(self.noise)
-        data = np.array([self.noise.cpu().numpy() * 255] * 3, dtype=np.uint8).T
+        # self.noise = generate_noise(WIDTH, HEIGHT)
+        data = np.repeat(
+            (self.noise.cpu().numpy() * 255).astype(np.uint8)[..., np.newaxis],
+            3,
+            axis=-1,
+        )
 
         self.image_system.create_buffer(data)
         self.image_system.draw()
