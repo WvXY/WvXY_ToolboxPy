@@ -42,6 +42,7 @@ uniform vec3 seeds[MAX_SEEDS];  // TODO: use push constants & weights
 uniform int nSeeds;
 
 uniform mat3 transform3 = mat3(1.0);
+uniform mat3 transform3Inv = mat3(1.0);
 uniform vec2 resolution = vec2(800, 800);
 
 //layout (push_constant) uniform Voronoi {
@@ -50,13 +51,18 @@ uniform vec2 resolution = vec2(800, 800);
 //} voronoi;
 
 void main() {
-    vec2 iPos = 2 * gl_FragCoord.xy / resolution - 1.0;
-    float minDist = 1.0e10;
+//    vec2 iPos = 2 * gl_FragCoord.xy / resolution - 1.0;
+    vec3 iPos = transform3Inv * vec3(2 * gl_FragCoord.xy / resolution - 1.0, 1.0);
+    float minDist = 1.0e30;
     int iClosestSeed = 0;
 
     for (int i = 0; i < nSeeds; ++i) {
-        vec3 iSeed = transform3 * vec3(seeds[i].xy, 1.0);
-        float iDist = distance(iPos, iSeed.xy) - seeds[i].z;
+//        vec3 iSeed = transform3 * vec3(seeds[i].xy, 1.0);
+        vec3 iSeed = seeds[i];
+//        float weight = clamp(1.0 / iSeed.z, 0.1, 1.0);
+        float weight = seeds[i].z;
+        float iDist = distance(iPos.xy, iSeed.xy) * weight - seeds[i].z;
+//        float iDist = distance(iPos, iSeed);
         if (iDist < minDist) {
         minDist = iDist;
         iClosestSeed = i;
