@@ -284,7 +284,8 @@ class Draw(SimpleAppInteractive):
                 point_size=site[2] * 10,
             )
 
-        self.draw()
+        self.voronoi_system.draw()
+        self.particle_system.draw()
 
         # if MULTI_SITES:
         #     self.draw_particles(

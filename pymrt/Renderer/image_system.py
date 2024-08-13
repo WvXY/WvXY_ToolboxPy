@@ -29,7 +29,7 @@ class ImageSystem(SystemBase):
     def create_buffer(self, image_data: np.ndarray):
         height, width, _ = image_data.shape
         self.texture = self.ctx.texture(
-            (width, height), 3, image_data.tobytes()
+            (width, height), 3, image_data.astype(np.uint8).tobytes()
         )
 
         self.vbo = self.ctx.buffer(self.vert_and_coord)
