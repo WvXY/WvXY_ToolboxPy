@@ -8,7 +8,7 @@ float rand(vec2 co){
 }
 
 vec3 rand3(vec2 co){
-    return vec3(rand(co), rand(co + 1.0), rand(co - 1.0));
+    return vec3(rand(co), rand(co + 0.5), rand(co - 0.2));
 }
 
 #if defined VERTEX_SHADER
@@ -38,7 +38,7 @@ void main() {
 
 out vec4 outColor;
 
-uniform vec3 seeds[MAX_SEEDS];  // TODO: use push constants & weights
+uniform vec4 seeds[MAX_SEEDS];  // TODO: use push constants & weights
 uniform int nSeeds;
 
 uniform mat3 transform3 = mat3(1.0);
@@ -58,9 +58,9 @@ void main() {
 
     for (int i = 0; i < nSeeds; ++i) {
 //        vec3 iSeed = transform3 * vec3(seeds[i].xy, 1.0);
-        vec3 iSeed = seeds[i];
+        vec4 iSeed = seeds[i];
 //        float weight = clamp(1.0 / iSeed.z, 0.1, 1.0);
-        float weight = seeds[i].z;
+        float weight = seeds[i].w;
         float iDist = distance(iPos.xy, iSeed.xy) * weight - seeds[i].z;
 //        float iDist = distance(iPos, iSeed);
         if (iDist < minDist) {

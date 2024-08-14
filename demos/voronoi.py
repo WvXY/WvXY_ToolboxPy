@@ -1,6 +1,7 @@
 import torch
 
 from pymrt.Utils.sampling import Boundary
+from pymrt import TORCH_DEVICE as DEVICE
 
 
 use_case = 1
@@ -49,12 +50,15 @@ class Voronoi:
         1 for [x, y, w] seeds,
         2 for [x, y, w, z] seeds
         """
-        assert self.seeds is not None
         self._experimental_mode = exp_mode
         self._seed_dim = 2 + exp_mode
 
     def add_seed(self, seed):
-        self.seeds = torch.cat([self.seeds, seed])
+        seed = torch.tensor(seed).reshape(1, -1)
+        if self.seeds is None:
+            self.seeds = seed
+        else:
+            self.seeds = torch.cat([self.seeds, seed])
 
     @property
     def sample_points(self):

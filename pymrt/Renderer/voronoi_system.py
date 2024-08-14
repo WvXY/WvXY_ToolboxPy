@@ -7,8 +7,8 @@ from .system_base import SystemBase
 class VoronoiPushData:
     __MAX_SEEDS = 128
 
-    def __init__(self, seeds=None):
-        self.seeds = np.empty([self.__MAX_SEEDS, 3], dtype="f4")  # [x, y, w]
+    def __init__(self, seeds=None, dim=2):
+        self.seeds = np.empty([self.__MAX_SEEDS, 4], dtype="f4")  # [x, y, w1, w2]
         if seeds is not None:
             self.len = len(seeds)
             self.seeds[: self.len] = seeds

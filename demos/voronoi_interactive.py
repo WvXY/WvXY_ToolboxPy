@@ -27,14 +27,19 @@ class VoronoiDemoApp(SimpleAppInteractive):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-        self.boundary = Boundary(Cases.boundary_vtx[1])
+        self.i_case = 1
+        self.__bvtx = Cases.boundary_vtx[self.i_case] - np.mean(
+            Cases.boundary_vtx[self.i_case], axis=0
+        )
+        self.boundary = Boundary(self.__bvtx * 1.2 * 10)
         self.voronoi = Voronoi(boundary=self.boundary)
         self.init_voronoi()
 
         self.transform2 = None
         self.set_uniforms()
         self.grid = None
+
+        del self.__bvtx
 
         # self.sp = boundary.sample_inside(n=10000, inplace=False, device=TORCH_DEVICE)
         # self.sp_site_idx = set_points_to_groups(
@@ -66,8 +71,10 @@ class VoronoiDemoApp(SimpleAppInteractive):
         )
 
     def init_voronoi(self):
-        self.voronoi.set_experimental_mode(1)
-        self.voronoi.generate_seeds_inside_boundary(n_seeds=100)
+        self.voronoi.set_experimental_mode(2)
+        # self.voronoi.generate_seeds_inside_boundary(n_seeds=10)
+        self.voronoi.add_seed([0, 0, 0.5, 0.5])
+        self.voronoi.add_seed([0, 0, 0.5, 0.5])
 
     def mouse_press_event(self, x, y, button):
         if button == 1:
@@ -76,7 +83,7 @@ class VoronoiDemoApp(SimpleAppInteractive):
                 [fixed_x, fixed_y, 1]
             )
             self.voronoi.add_seed(
-                [transformed_xy[0], transformed_xy[1], torch.rand(1) + 1]
+                [transformed_xy[0], transformed_xy[1], torch.rand(1), torch.rand(1) * 0.5]
             )
 
         # voronoi.refresh_groups()
@@ -103,14 +110,14 @@ class VoronoiDemoApp(SimpleAppInteractive):
             grid=self.grid, color=np.array([0.9, 0.9, 0.9])
         )
 
-        self.voronoi.seeds[0, 2] = torch.sin(torch.tensor(time)) + 1
-        self.voronoi.seeds[1, 2] = torch.cos(torch.tensor(time * 0.5 + 1)) + 1
-        self.voronoi.seeds[2, 2] = torch.sin(torch.tensor(time * 0.3 + 1)) + 1
+        self.voronoi.seeds[0, 2] = torch.sin(torch.tensor(time))
+        self.voronoi.seeds[0, 3] = torch.cos(torch.tensor(time * 0.5 + 1))
+        # self.voronoi.seeds[2, 2] = torch.sin(torch.tensor(time * 0.3 + 1)) + 1
         # voronoi.sites[0, 2] += 0.005
         # print(voronoi.sites[0, 2])
 
         self.voronoi_system.create_buffer(
-            self.voronoi.seeds[:, :3].cpu(), self.boundary.vtx2xy
+            self.voronoi.seeds[:, :].cpu(), self.boundary.vtx2xy
         )
 
         for site in self.voronoi.seeds.cpu():
@@ -124,7 +131,4 @@ class VoronoiDemoApp(SimpleAppInteractive):
 
 
 if __name__ == "__main__":
-    VoronoiDemoApp.voronoi.add_seed([0, 0, 1])
-    VoronoiDemoApp.voronoi.add_seed([1, 0, 1])
-
     VoronoiDemoApp.run()
