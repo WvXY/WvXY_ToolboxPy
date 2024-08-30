@@ -95,6 +95,11 @@ class Voronoi:
         return seed_new
 
 
+    @staticmethod
+    def fortunes_algorithm():
+        pass
+
+
 class MultiGroupVoronoi(Voronoi):
     def __init__(self):
         super().__init__()

@@ -51,21 +51,17 @@ uniform vec2 resolution = vec2(800, 800);
 //} voronoi;
 
 void main() {
-//    vec2 iPos = 2 * gl_FragCoord.xy / resolution - 1.0;
     vec3 iPos = transform3Inv * vec3(2 * gl_FragCoord.xy / resolution - 1.0, 1.0);
-    float minDist = 1.0e30;
+    float minDist = 1.0e10;
     int iClosestSeed = 0;
 
     for (int i = 0; i < nSeeds; ++i) {
 //        vec3 iSeed = transform3 * vec3(seeds[i].xy, 1.0);
         vec4 iSeed = seeds[i];
-//        float weight = clamp(1.0 / iSeed.z, 0.1, 1.0);
-        float weight = seeds[i].w;
-        float iDist = distance(iPos.xy, iSeed.xy) * weight - seeds[i].z;
-//        float iDist = distance(iPos, iSeed);
+        float iDist = distance(vec3(iPos.xy, 0), iSeed.xyz) * iSeed.w;
         if (iDist < minDist) {
-        minDist = iDist;
-        iClosestSeed = i;
+            minDist = iDist;
+            iClosestSeed = i;
         }
     }
 

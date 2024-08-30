@@ -12,7 +12,7 @@ from pymrt.Utils.optimize_utils import (
     set_points_to_groups,
     map_indices,
 )
-from voronoi import Voronoi
+from pymrt.Geometry import Voronoi
 from pymrt.Utils.sampling import Boundary
 
 
@@ -71,10 +71,10 @@ class VoronoiDemoApp(SimpleAppInteractive):
         )
 
     def init_voronoi(self):
-        self.voronoi.set_experimental_mode(2)
+        self.voronoi.set_experimental_mode(0)
         # self.voronoi.generate_seeds_inside_boundary(n_seeds=10)
         self.voronoi.add_seed([0, 0, 0.5, 0.5])
-        self.voronoi.add_seed([0, 0, 0.5, 0.5])
+        # self.voronoi.add_seed([0, 0, 0.5, 0.5])
 
     def mouse_press_event(self, x, y, button):
         if button == 1:
@@ -83,7 +83,7 @@ class VoronoiDemoApp(SimpleAppInteractive):
                 [fixed_x, fixed_y, 1]
             )
             self.voronoi.add_seed(
-                [transformed_xy[0], transformed_xy[1], torch.rand(1), torch.rand(1) * 0.5]
+                [transformed_xy[0], transformed_xy[1], torch.rand(1) * 0.5 + 0.5, torch.rand(1) * 0.5 + 0.5]
             )
 
         # voronoi.refresh_groups()
@@ -110,8 +110,8 @@ class VoronoiDemoApp(SimpleAppInteractive):
             grid=self.grid, color=np.array([0.9, 0.9, 0.9])
         )
 
-        self.voronoi.seeds[0, 2] = torch.sin(torch.tensor(time))
-        self.voronoi.seeds[0, 3] = torch.cos(torch.tensor(time * 0.5 + 1))
+        # self.voronoi.seeds[0, 2] = torch.sin(torch.tensor(time))
+        # self.voronoi.seeds[0, 3] = torch.cos(torch.tensor(time * 0.5 + 1))
         # self.voronoi.seeds[2, 2] = torch.sin(torch.tensor(time * 0.3 + 1)) + 1
         # voronoi.sites[0, 2] += 0.005
         # print(voronoi.sites[0, 2])

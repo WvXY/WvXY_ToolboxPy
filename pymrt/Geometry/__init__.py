@@ -10,6 +10,7 @@ from .Primitives import *
 # Current no other files here, so just import all
 from .SdPrimitives import *
 from .obj_process import *
+from .voronoi import Voronoi, MultiGroupVoronoi
 
 __all__ = [
     "SdPrimitives",
@@ -26,4 +27,6 @@ __all__ = [
     "OrientedBox",
     "LineBox",
     "GameObjectManager",
+    "Voronoi",
+    "MultiGroupVoronoi"
 ]
