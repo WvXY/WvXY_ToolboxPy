@@ -38,6 +38,7 @@ void main() {
 
 out vec4 outColor;
 
+uniform int vMode = 0;
 uniform vec4 seeds[MAX_SEEDS];  // TODO: use push constants & weights
 uniform int nSeeds;
 
@@ -58,7 +59,15 @@ void main() {
     for (int i = 0; i < nSeeds; ++i) {
 //        vec3 iSeed = transform3 * vec3(seeds[i].xy, 1.0);
         vec4 iSeed = seeds[i];
-        float iDist = distance(vec3(iPos.xy, 0), iSeed.xyz) * iSeed.w;
+
+        float iDist;
+        if (vMode == 2)
+            iDist = distance(vec3(iPos.xy, 0), iSeed.xyz) * iSeed.w;
+        else if (vMode == 1)
+            iDist = distance(iPos.xy, iSeed.xy) * iSeed.z;   // experimental
+        else
+            iDist = distance(iPos.xy, iSeed.xy);
+
         if (iDist < minDist) {
             minDist = iDist;
             iClosestSeed = i;

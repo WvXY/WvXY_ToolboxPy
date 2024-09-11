@@ -1,6 +1,8 @@
 import moderngl
 import numpy as np
 import torch
+from torch import dtype
+
 from test_cases import Cases
 
 from pymrt import TORCH_DEVICE
@@ -20,7 +22,7 @@ class VoronoiDemoApp(SimpleAppInteractive):
     gl_version = (4, 6)
     title = "Interactive Voronoi Demo"
     vsync = True
-    window_size = (800, 800)
+    window_size = (1280, 720)
     aspect_ratio = window_size[0] / window_size[1]
     resizable = False
     resampling = 4
@@ -33,6 +35,7 @@ class VoronoiDemoApp(SimpleAppInteractive):
         )
         self.boundary = Boundary(self.__bvtx * 1.2 * 10)
         self.voronoi = Voronoi(boundary=self.boundary)
+        self.voronoi_mode = 0
         self.init_voronoi()
 
         self.transform2 = None
@@ -69,11 +72,13 @@ class VoronoiDemoApp(SimpleAppInteractive):
         self.voronoi_system.set_uniform(
             "transform3Inv", self.transform2.inv_mat3.flatten("F")
         )
+        self.voronoi_system.set_uniform("resolution", np.array((self.wnd.width, self.wnd.height), dtype="f4"))
+        self.voronoi_system.set_uniform("vMode", self.voronoi_mode.to_bytes(4, "little"))
 
     def init_voronoi(self):
         self.voronoi.set_experimental_mode(0)
         # self.voronoi.generate_seeds_inside_boundary(n_seeds=10)
-        self.voronoi.add_seed([0, 0, 0.5, 0.5])
+        self.voronoi.add_seed([0, 0, 0.0, 0.0])
         # self.voronoi.add_seed([0, 0, 0.5, 0.5])
 
     def mouse_press_event(self, x, y, button):
