@@ -1,5 +1,5 @@
 import unittest
-from pymrt.Interface import SimpleApp
+from w_tbx.Interface import SimpleApp
 import moderngl
 import numpy as np
 

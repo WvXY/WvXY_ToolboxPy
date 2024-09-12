@@ -1,9 +1,9 @@
-from PyMRT.Interface.interface import SimpleInterface
+from w_tbx.Interface.interface import SimpleAppInteractive
 import moderngl
 import numpy as np
 
 
-class MouseEventDemo(SimpleInterface):
+class MouseEventDemo(SimpleAppInteractive):
     resizable = False
 
     def __init__(self, **kwargs):

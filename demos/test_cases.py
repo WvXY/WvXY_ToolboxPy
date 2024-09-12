@@ -1,6 +1,6 @@
 import numpy as np
 
-from pymrt.Geometry.obj_process import read_obj
+from w_tbx.Geometry.obj_process import read_obj
 
 
 def normalize(x):

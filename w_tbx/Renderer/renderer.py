@@ -24,8 +24,7 @@ class Renderer(Window):
         self.image_system = ImageSystem(ctx=self.ctx)
 
     def render(self, time: float, frame_time: float):
-        self.ctx.clear(1.0, 1.0, 1.0)
-        self.ctx.enable(moderngl.BLEND)
+        pass
 
     def draw(self):
         # the order matters

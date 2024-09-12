@@ -1,7 +1,7 @@
 import torch
 
-from pymrt.Utils.sampling import Boundary
-from pymrt import TORCH_DEVICE as DEVICE
+from w_tbx.Utils.sampling import Boundary
+from w_tbx import TORCH_DEVICE as DEVICE
 
 
 use_case = 1

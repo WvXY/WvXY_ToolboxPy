@@ -2,9 +2,9 @@ import numpy as np
 import torch
 import moderngl
 
-from pymrt.Interface.interface import SimpleApp
+from w_tbx.Interface.interface import SimpleApp
 
-from pymrt import TORCH_DEVICE
+from w_tbx import TORCH_DEVICE
 
 WIDTH, HEIGHT = 100, 100
 

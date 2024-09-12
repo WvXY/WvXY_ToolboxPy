@@ -1,6 +1,6 @@
 import sys
 
-sys.path.append("../PyMRT")
+sys.path.append("")
 
 # import libraries
 import moderngl
@@ -32,8 +32,8 @@ __all__ = list(
     | set(Interface.__all__)
 )
 
-print("\033[92m[PyMRT] Successfully imported")
-print(f"[PyMRT] PyTorch device: {TORCH_DEVICE}\033[0m")
+print("\033[92m[w_tbx] Successfully imported")
+print(f"[w_tbx] Using PyTorch device: {TORCH_DEVICE}\033[0m")
 
 
 def __getattr__(name):

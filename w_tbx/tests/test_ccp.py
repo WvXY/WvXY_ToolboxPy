@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 # collision test
 class MyTestCase(unittest.TestCase):
     def test_AABB(self):
-        from PyMRT.Physics.collision import AABB
-        from PyMRT.Geometry import Circle, Rectangle, Line, LineBox, Particle
-        from PyMRT.Geometry.GameObject import GameObjectManager
+        from ..Physics.collision import AABB
+        from ..Geometry import Circle, Rectangle, Line, LineBox, Particle
+        from ..Geometry.GameObject import GameObjectManager
 
         game_objs = GameObjectManager()
         game_objs.add(Circle(1, [0, 0]))

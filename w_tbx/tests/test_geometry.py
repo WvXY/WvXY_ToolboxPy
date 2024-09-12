@@ -1,6 +1,6 @@
 import unittest
-from PyMRT.Geometry import Particle, OrientedBox, Circle, Rectangle, Line
-from PyMRT.Geometry import GameObjectManager
+from ..Geometry import Particle, OrientedBox, Circle, Rectangle, Line
+from ..Geometry import GameObjectManager
 import torch
 
 

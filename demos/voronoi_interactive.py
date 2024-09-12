@@ -5,23 +5,23 @@ from torch import dtype
 
 from test_cases import Cases
 
-from pymrt import TORCH_DEVICE
-from pymrt.Interface.interface import (
+from w_tbx import TORCH_DEVICE
+from w_tbx.Interface.interface import (
     SimpleAppInteractive,
 )
-from pymrt.Renderer.utils import Transform2d, generate_grids
-from pymrt.Utils.optimize_utils import (
+from w_tbx.Renderer.utils import Transform2d, generate_grids
+from w_tbx.Utils.optimize_utils import (
     set_points_to_groups,
     map_indices,
 )
-from pymrt.Geometry import Voronoi
-from pymrt.Utils.sampling import Boundary
+from w_tbx.Geometry import Voronoi
+from w_tbx.Utils.sampling import Boundary
 
 
 class VoronoiDemoApp(SimpleAppInteractive):
     gl_version = (4, 6)
     title = "Interactive Voronoi Demo"
-    vsync = True
+    vsync = False
     window_size = (1280, 720)
     aspect_ratio = window_size[0] / window_size[1]
     resizable = False
@@ -72,8 +72,13 @@ class VoronoiDemoApp(SimpleAppInteractive):
         self.voronoi_system.set_uniform(
             "transform3Inv", self.transform2.inv_mat3.flatten("F")
         )
-        self.voronoi_system.set_uniform("resolution", np.array((self.wnd.width, self.wnd.height), dtype="f4"))
-        self.voronoi_system.set_uniform("vMode", self.voronoi_mode.to_bytes(4, "little"))
+        self.voronoi_system.set_uniform(
+            "resolution",
+            np.array((self.wnd.width, self.wnd.height), dtype="f4"),
+        )
+        self.voronoi_system.set_uniform(
+            "vMode", self.voronoi_mode.to_bytes(4, "little")
+        )
 
     def init_voronoi(self):
         self.voronoi.set_experimental_mode(0)
@@ -88,7 +93,12 @@ class VoronoiDemoApp(SimpleAppInteractive):
                 [fixed_x, fixed_y, 1]
             )
             self.voronoi.add_seed(
-                [transformed_xy[0], transformed_xy[1], torch.rand(1) * 0.5 + 0.5, torch.rand(1) * 0.5 + 0.5]
+                [
+                    transformed_xy[0],
+                    transformed_xy[1],
+                    torch.rand(1) * 0.5 + 0.5,
+                    torch.rand(1) * 0.5 + 0.5,
+                ]
             )
 
         # voronoi.refresh_groups()
@@ -103,8 +113,7 @@ class VoronoiDemoApp(SimpleAppInteractive):
     def render(self, time: float, frame_time: float, **kwargs):
         self.ctx.clear(0.8, 0.8, 0.8)
         self.ctx.enable(
-            moderngl.BLEND
-            | moderngl.PROGRAM_POINT_SIZE  # | moderngl.DEPTH_TEST
+            moderngl.BLEND | moderngl.PROGRAM_POINT_SIZE | moderngl.DEPTH_TEST
         )
 
         # ---draw---
