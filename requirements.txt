@@ -1,0 +1,12 @@
+del_msh==0.1.22
+imgui==2.0.0
+matplotlib==3.9.2
+moderngl==5.11.1
+moderngl_window==2.4.6
+numpy==2.1.1
+Pillow==10.4.0
+pygalmesh==0.10.7
+pygmsh==7.1.17
+pyrr==0.10.3
+setuptools==72.1.0
+torch==2.4.1
