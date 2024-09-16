@@ -3,9 +3,11 @@ from . import (
     SdPrimitives,
     GameObject,
     obj_process,
+    nurbs,
 )
 from .GameObject import GameObjectManager
 from .Primitives import *
+from .nurbs import NURBS
 
 # Current no other files here, so just import all
 from .SdPrimitives import *
@@ -28,6 +30,7 @@ __all__ = [
     "LineBox",
     "GameObjectManager",
     "Voronoi",
-    "MultiGroupVoronoi"
+    "MultiGroupVoronoi",
+    "NURBS",
 ]
 

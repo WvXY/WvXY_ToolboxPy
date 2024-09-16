@@ -113,7 +113,7 @@ class VoronoiDemoApp(SimpleAppInteractive):
     def render(self, time: float, frame_time: float, **kwargs):
         self.ctx.clear(0.8, 0.8, 0.8)
         self.ctx.enable(
-            moderngl.BLEND | moderngl.PROGRAM_POINT_SIZE | moderngl.DEPTH_TEST
+            moderngl.BLEND | moderngl.PROGRAM_POINT_SIZE
         )
 
         # ---draw---
